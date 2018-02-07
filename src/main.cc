@@ -17,17 +17,28 @@ int main(int argc, char* argv[])
   if (not file.good())
     return 1;
 
+  //Parse the file
   toml::Data data = toml::parse(file);
 
-  std::string server_name = toml::get<toml::String>(data.at(server."server_name"));
-  std::string port = toml::get<toml::String>(data.at("port"));
-  std::string ip = toml::get<toml::String>(data.at("ip"));
-  std::string root_dir = toml::get<toml::String>(data.at("root_dir"));
+  //Get 2 first elements: log_file and dry_run
+  std::string log_file = toml::get<toml::String>(data.at("log_file"));
+  bool dry_run = toml::get<bool>(data.at("dry_run"));
 
+  //Create array of server to delimit each server config
+  std::vector<toml::Table> server = toml::get<toml::Array<toml::Table>>(data.at("server"));
 
-  std::cout << server_name <<std::endl;
-  std::cout << port <<std::endl;
-  std::cout << ip <<std::endl;
+  //Create variables for each element of server
+  std::string server_name = toml::get<toml::String>(server.at(0).at("server_name"));    
+  std::string port = toml::get<toml::String>(server.at(0).at("port"));    
+  std::string ip = toml::get<toml::String>(server.at(0).at("ip"));    
+  std::string root_dir = toml::get<toml::String>(server.at(0).at("root_dir"));    
+
+  std::cout << log_file << std::endl;
+  std::cout << dry_run << std::endl;
+  std::cout << "\n" << std::endl;
+  std::cout << server_name << std::endl;
+  std::cout << port << std::endl;
+  std::cout << ip << std::endl;
   std::cout << root_dir <<std::endl;
 
   return 0;
