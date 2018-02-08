@@ -36,12 +36,21 @@ int init_connection()
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if(sock == -1)
 	error("sock", 1);
-    struct sockaddr_in addrin
+   /*
+   struct sockaddr_in addrin
     {
 	.sin_family = AF_INET,
 	.sin_port = htons(listen_port),
 	    .sin_addr = {}
     };
+
+    */
+
+    struct sockaddr_in addrin;
+    addrin.sin_family = AF_INET;
+    addrin.sin_port = htons(listen_port);
+    
+
     if(!inet_aton("0.0.0.0", &addrin.sin_addr))
 	error("inet_aton", 1);
     if(bind(sock, (sockaddr*)&addrin, sizeof(addrin)) == -1)
@@ -53,7 +62,7 @@ int init_connection()
 
 int wait_for_client(int sock)
 {
-    struct sockaddr_in sockin{};
+    struct sockaddr_in sockin;
     socklen_t socklen = sizeof(struct sockaddr_in);
     int connection_sock = accept4(sock,  (sockaddr*)&sockin, &socklen, 0);//, SOCK_NONBLOCK);
     if(connection_sock == -1)

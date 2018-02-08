@@ -3,7 +3,8 @@
 #include <unistd.h>
 #include <fstream>
 #include <vector>
-//#include <string>
+#include <stdlib.h>
+#include <string>
 //#define _DEFAULT_SOURCE
 //#define _GNU_SOURCE
 
