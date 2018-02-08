@@ -1,37 +1,4 @@
-#include <iostream>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <fstream>
-//#include <string>
-//#define _DEFAULT_SOURCE
-//#define _GNU_SOURCE
-
-enum error_type
-{
-    ACCESS_DENIED = 401,
-    FILE_NOT_FOUND = 404,
-    INTERNAL_ERROR = 500,
-    NIQUE_TA_MERE = 6969
-};
-
-enum request_type
-{
-    RQFILE
-};
-
-struct fileparams
-{
-    std::string path;
-};
-
-int init_connection();
-int wait_for_client(int sock);
-std::string get_request(int client_sock);
-void dispatch_request(int client_sock, std::string request);
-request_type get_request_type(std::string request, void*& params);
-std::string forge_error_response(error_type err);
-std::string forge_response(request_type, void* params);
-void send_reponse(int sock, std::string response);
+#include "header.hh"
 
 int listen_port = 6666;
 
@@ -40,6 +7,7 @@ int main(int argc, char** argv)
     if(argc > 1)
 	listen_port = atoi(argv[1]);
     int sock = init_connection();
+    init_threads();
     while(1)
     {
 	int client_sock = wait_for_client(sock);
@@ -78,7 +46,7 @@ int init_connection()
 	error("inet_aton", 1);
     if(bind(sock, (sockaddr*)&addrin, sizeof(addrin)) == -1)
 	error("bind", 1);
-    if(listen(sock, 1) == -1) //limited to 1 connection simultaazef,szoldgkg
+    if(listen(sock, 10) == -1) //limited to 1 connection simultaazef,szoldgkg
 	error("listen", 1);
     return sock;
 }
@@ -126,17 +94,20 @@ std::string get_request(int client_sock)
 
 void dispatch_request(int client_sock, std::string request)
 {
-    void* params = NULL;
-    request_type rqtype = get_request_type(request, params);
-    std::string response = forge_response(rqtype, params);
-    
-    std::cout << "response is" << std::endl << response << "end of response" << std::endl;
-    std::cout << "sending response:..." << std::endl;
-    
-    send_reponse(client_sock, response);
-    
-    std::cout << "done" << std::endl;
-    close(client_sock); //fixme: should we close this
+    while(1)
+    {
+	for(int i = 0; i < THREADS_NB; i++)
+	{
+	    if(!g_threads[i].is_active)
+	    {
+		std::cout << "found inactive thread!: " << &g_threads[i]  << std::endl;
+		g_threads[i].client_sock = client_sock;
+		g_threads[i].request = request;
+		g_threads[i].is_active = true; //replace with mutex
+		return;
+	    }
+	}
+    }
 }
 
 request_type get_request_type(std::string request, void*& params)
