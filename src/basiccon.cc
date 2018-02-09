@@ -73,6 +73,7 @@ int wait_for_client(int sock)
 
 bool is_request_full(std::string request)
 {
+    request = request;
     //fixme
     return true;
 }
@@ -121,6 +122,7 @@ void dispatch_request(int client_sock, std::string request)
 
 request_type get_request_type(std::string request, void*& params)
 {
+    request = request;
     //fixme: mutiple request types possible?
     params = new struct fileparams;
     ((struct fileparams*)params)->path = "testfile";
@@ -170,6 +172,6 @@ void send_reponse(int client_sock, std::string response)
     if(res == -1)
 	error("write", 2);
     else
-	if(res != response.size())
+	if((size_t)res != response.size())
 	    error("write: wrong size written", 2);
 }
