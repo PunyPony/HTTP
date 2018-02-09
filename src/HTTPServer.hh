@@ -1,6 +1,7 @@
 
 #pragma once
 #include <HTTPServerOptions.hh>
+#include <RequestHandler.hh>
 
 class SignalHandler;
 class HTTPServerAcceptor;
@@ -29,7 +30,8 @@ class HTTPServer {
    * `onError` callback will be invoked if some errors occurs while starting the
    * server instead of throwing exception.
    */
-  void start();
+  
+  int start();
 
   /**
    * Stop listening on bound ports. (Stop accepting new work).
@@ -55,4 +57,6 @@ class HTTPServer {
   int getListenSocket() const;
 
  private:
+  HTTPServerOptions options_;
+  RequestHandler request_handler_;
 };

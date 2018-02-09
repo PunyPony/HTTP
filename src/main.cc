@@ -2,9 +2,13 @@
 #include <../toml/toml.hpp>
 #include <fstream>
 #include <string>
-#include <sys/types>
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+
+#include <HTTPServer.hh>
+#include <HTTPServerOptions.hh>
+#include <ThreadPool.hh>
 
 int main(int argc, char* argv[])
 {
@@ -22,19 +26,21 @@ int main(int argc, char* argv[])
 
   //Parse the file
   toml::Data data = toml::parse(file);
-  
+  /*
+  if (data == None)
+    return 2; il faut trouver la valeur de data quand ça foire*/
 
-  /*FIXME
-   * CHECK VALUES - IF NONE THEN RETURN 2*/
+  //FIXME CHECK VALUES - IF NONE THEN RETURN 2
 
   //Get 2 first elements: log_file and dry_run
   std::string log_file = toml::get<toml::String>(data.at("log_file"));
   bool dry_run = toml::get<bool>(data.at("dry_run"));
   
+  
   if (dry_run)
   {
     //Create array of server to delimit each server config
-    std::vector<toml::Table> server = toml::get<toml::Array<toml::Table>>(data.at("server"));
+    std::vector<toml::Table> server = toml::get<toml::Array<toml::Table> >(data.at("server"));
 
     //Create variables for each element of server
     std::string server_name = toml::get<toml::String>(server.at(0).at("server_name"));    
@@ -49,17 +55,14 @@ int main(int argc, char* argv[])
     std::cout << port << std::endl;
     std::cout << ip << std::endl;
     std::cout << root_dir <<std::endl;
+    // FIXME if error in the parsing, return 2
 
-    /*FIXME
-     * if error in the parsing, return 2 */
-
-    return 0;
+    //return 0;
   }
-  else
-  {
-    
 
-  }
+  HTTPServerOptions options(6666, 8, "0.0.0.0");
+  HTTPServer server(options);
+  server.start();
 
   return 0;
 
