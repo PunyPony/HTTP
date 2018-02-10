@@ -1,4 +1,3 @@
-
 //#include <fstream>
 //#include <vector>
 //#include <stdlib.h>
@@ -78,6 +77,26 @@ int HTTPServer::start()
       return -1;
     }
     std::cout << "New client" << std::endl;
+    auto future = request_handler_.getThreadPool().submit([connection_sock]()
+        {
+          for(;;)
+          {
+            char buffer[200] = {0};
+            int ret = recv(connection_sock, buffer, 199, 0);
+            if (ret == 0 || ret == -1)
+            {
+              std::cout << "End of request" << std::endl;
+              break;
+            }
+            std::cout << "New request from client: " << buffer << std::endl;
+            ret = send(connection_sock, buffer, ret, 0);
+            if (ret == 0 || ret == -1)
+            {
+              break;
+            }
+          }
+            });
+    /*
     for(;;)
 			{
 				char buffer[200] = {0};
@@ -94,7 +113,7 @@ int HTTPServer::start()
 					break;
         }
 			}
-      return 0;
+    */
   }
         
   close(sock);

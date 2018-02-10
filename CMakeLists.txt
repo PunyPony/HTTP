@@ -12,9 +12,11 @@ include_directories(src/)
 
 set(SRC
     src/main.cc
-    src/HTTPServer.cc
+    src/ServersHandler.cc
     src/HTTPServerOptions.cc
+    src/HTTPServer.cc
     src/RequestHandler.cc
+    src/ResponseBuilder.cc
 )
 
 add_executable(myhttpd ${SRC})

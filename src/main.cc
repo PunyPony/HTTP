@@ -1,14 +1,18 @@
 #include <stdio.h>
-#include <../toml/toml.hpp>
 #include <fstream>
 #include <string>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
-
-#include <HTTPServer.hh>
+#include <../toml/toml.hpp>
 #include <HTTPServerOptions.hh>
 #include <ThreadPool.hh>
+#include <ServersHandler.hh>
+
+namespace ugly
+{
+  ServersHandler* server_handler_;
+}
 
 int main(int argc, char* argv[])
 {
@@ -59,11 +63,13 @@ int main(int argc, char* argv[])
 
     //return 0;
   }
-
+  std::vector<HTTPServerOptions> servers_options;
   HTTPServerOptions options(6666, 8, "0.0.0.0");
-  HTTPServer server(options);
-  server.start();
 
+  servers_options.push_back(options);
+  ServersHandler servers_handler(servers_options);
+  ugly::server_handler_ = &servers_handler;
+  
   return 0;
 
 }

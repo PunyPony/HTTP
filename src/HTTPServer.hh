@@ -1,14 +1,7 @@
-
 #pragma once
 #include <HTTPServerOptions.hh>
 #include <RequestHandler.hh>
 
-class SignalHandler;
-class HTTPServerAcceptor;
-
-/**
- * HTTPServer based on proxygen http libraries
- */
 class HTTPServer {
  public:
   
