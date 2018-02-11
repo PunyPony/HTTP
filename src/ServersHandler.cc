@@ -6,11 +6,13 @@
 namespace ugly
 {
     volatile std::sig_atomic_t SignalStatus;
+    ServersHandler* server_handler_;
 }
 
 ServersHandler::ServersHandler(std::vector<HTTPServerOptions> options)
     : servers_()
 {
+    ugly::server_handler_ = this;
     SetSignals();
     for (std::vector<HTTPServerOptions>::iterator it = options.begin(); 
     it != options.end(); ++it)
@@ -30,10 +32,17 @@ std::vector<HTTPServer*> ServersHandler::get_servers()
 void signal_handler(int signal)
 {
     ugly::SignalStatus = signal;
-    std::cout << "SIGINT : Signal value : " << ugly::SignalStatus << '\n';  
+    std::cout << "SIGINT : Signal value : " << ugly::SignalStatus << '\n';
+    /*
     for (std::vector<HTTPServer*>::iterator it = ugly::server_handler_->get_servers().begin(); 
     it != ugly::server_handler_->get_servers().end(); ++it)
+    {
+        std::cout << "test" << '\n';  
         (*it)->stop();
+    }
+    */
+    for (auto it : ugly::server_handler_->get_servers())
+        it->stop();
 }
 
 void signal_ignored(int signal)
@@ -46,5 +55,5 @@ void signal_ignored(int signal)
 void SetSignals()
 {
     std::signal(SIGINT, signal_handler);
-    std::signal(SIGABRT || SIGFPE || SIGILL || SIGTERM, signal_ignored);
+    std::signal(SIGABRT || SIGSTOP || SIGFPE || SIGILL || SIGTERM, signal_ignored);
 }
