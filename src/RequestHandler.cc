@@ -1,12 +1,13 @@
 #include <RequestHandler.hh>
 #include <ThreadPool.hh>
 
-RequestHandler::RequestHandler(int threads)
-  : thread_pool_(threads)
+RequestHandler::RequestHandler()
 {}
 
+/*
 ThreadPool& RequestHandler::getThreadPool()
 {
       return thread_pool_;
 }
+*/
 

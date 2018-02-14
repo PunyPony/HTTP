@@ -18,14 +18,15 @@
 #include <HTTPServerOptions.hh>
 
 HTTPServer::HTTPServer(HTTPServerOptions options)
-    : options_(options), request_handler_(options.threads_)
+    : options_(options)
 {
     // Insert a filter to fail all the CONNECT request, if required
     // Add Content Compression filter (gzip), if needed. Should be
     // final filter
 }
 
-HTTPServer::~HTTPServer() {}
+HTTPServer::~HTTPServer() 
+{}
 
 class HandlerCallbacks {
 public:
@@ -91,24 +92,25 @@ int HTTPServer::start()
         }
         int waitres = epoll_wait(epollfd, &events, 1, 0); //nb of events?
         if (waitres > 0)
+        {
             client_sock = debug_clientsock;
             DefaultThreadPool::submitJob([client_sock]() //fixme: sock where event occured
-        {
-            char buffer[200] = { 0 };
-            int ret = recv(client_sock, buffer, 199, 0);
-            if (ret == 0 || ret == -1)
             {
-                std::cout << "Error recv" << std::endl;
-                return -1;
-            }
-            std::cout << "New request from client: " << buffer << std::endl;
-            ret = send(client_sock, buffer, ret, 0);
-            if (ret == 0 || ret == -1)
-            {
-                std::cout << "error send" << std::endl;
-            }
+                char buffer[200] = { 0 };
+                int ret = recv(client_sock, buffer, 199, 0);
+                if (ret == 0 || ret == -1)
+                {
+                    //std::cout << "Error recv" << std::endl;
+                    return -1;
+                }
+                std::cout << "New request from client: " << buffer << std::endl;
+                ret = send(client_sock, buffer, ret, 0);
+                if (ret == 0 || ret == -1)
+                {
+                    std::cout << "error send" << std::endl;
+                }
+            });
         }
-        );
     }
 
     close(sock);
