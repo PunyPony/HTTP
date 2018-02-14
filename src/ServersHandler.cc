@@ -14,10 +14,9 @@ ServersHandler::ServersHandler(std::vector<HTTPServerOptions> options)
 {
     ugly::server_handler_ = this;
     SetSignals();
-    for (std::vector<HTTPServerOptions>::iterator it = options.begin(); 
-    it != options.end(); ++it)
+    for (auto it : options)
     {
-        HTTPServer server(*it);
+        HTTPServer server(it);
         servers_.push_back(&server);
         server.start();
     }
