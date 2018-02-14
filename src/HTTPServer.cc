@@ -73,6 +73,7 @@ int HTTPServer::start()
         EPOLLIN,
         { 0 }
     };
+    int debug_clientsock; //debug variable to test for 1 client (last connected)
     for (;;)
     {
         struct sockaddr_in sockin;
@@ -84,10 +85,13 @@ int HTTPServer::start()
             if (-1 == epoll_ctl(epollfd, EPOLL_CTL_ADD, client_sock, &events))
             {
                 std::cout << "epoll_ctl error" << std::endl;
+                return -1;
             }
+            debug_clientsock = client_sock;
         }
         int waitres = epoll_wait(epollfd, &events, 1, 0); //nb of events?
         if (waitres > 0)
+            client_sock = debug_clientsock;
             DefaultThreadPool::submitJob([client_sock]() //fixme: sock where event occured
         {
             char buffer[200] = { 0 };
