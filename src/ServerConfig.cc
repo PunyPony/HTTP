@@ -30,9 +30,9 @@ enum Param {
       server_name.setparam(name);
     }
 
-    std::string ServerConfig::get_port()
+    Serverparameter<std::string>& ServerConfig::get_port()
     {
-      return port.getparam();
+      return port;
     }
 
     void ServerConfig::set_port(std::string port_)
@@ -40,9 +40,9 @@ enum Param {
       port.setparam(port_);
     }
 
-    std::string ServerConfig::get_ip()
+    Serverparameter<std::string>& ServerConfig::get_ip()
     {
-      return ip.getparam();
+      return ip;
     }
 
     void ServerConfig::set_ip(std::string ip_)
@@ -50,9 +50,9 @@ enum Param {
       ip.setparam(ip_);
     }
 
-    std::string ServerConfig::get_root_dir()
+    Serverparameter<std::string>& ServerConfig::get_root_dir()
     {
-      return root_dir.getparam();
+      return root_dir;
     }
 
     void ServerConfig::set_root_dir(std::string root_dir_)
@@ -60,9 +60,9 @@ enum Param {
       root_dir.setparam(root_dir_);
     }
 
-    bool ServerConfig::get_gzip()
+    Serverparameter<bool>& ServerConfig::get_gzip()
     {
-      return gzip.getparam();
+      return gzip;
     }
 
     void ServerConfig::set_gzip(bool gzip_)
@@ -70,9 +70,9 @@ enum Param {
       gzip.setparam(gzip_);
     }
 
-    bool ServerConfig::get_log()
+    Serverparameter<bool>& ServerConfig::get_log()
     {
-      return log.getparam();
+      return log;
     }
 
     void ServerConfig::set_log(bool log_)
@@ -80,9 +80,9 @@ enum Param {
       log.setparam(log_);
     }
   
-    std::string ServerConfig::get_cgi_ext()
+    Serverparameter<std::string>& ServerConfig::get_cgi_ext()
     {
-      return cgi_ext.getparam();
+      return cgi_ext;
     }
 
     void ServerConfig::set_cgi_ext(std::string cgi_ext_)
@@ -90,9 +90,9 @@ enum Param {
       cgi_ext.setparam(cgi_ext_);
     }
 
-    std::string ServerConfig::get_ssl_certificate()
+    Serverparameter<std::string>& ServerConfig::get_ssl_certificate()
     {
-      return ssl_certificate.getparam();
+      return ssl_certificate;
     }
 
     void ServerConfig::set_ssl_certificate(std::string ssl_certificate_)
@@ -100,9 +100,9 @@ enum Param {
       ssl_certificate.setparam(ssl_certificate_);
     }
 
-    std::string ServerConfig::get_ssl_certificate_key()
+    Serverparameter<std::string>& ServerConfig::get_ssl_certificate_key()
     {
-      return ssl_certificate_key.getparam();
+      return ssl_certificate_key;
     }
 
     void ServerConfig::set_ssl_certificate_key(std::string ssl_certificate_key_)
@@ -110,9 +110,9 @@ enum Param {
       ssl_certificate_key.setparam(ssl_certificate_key_);
     }
  
-    bool ServerConfig::get_basic_auth()
+    Serverparameter<bool>& ServerConfig::get_basic_auth()
     {
-      return basic_auth.getparam();
+      return basic_auth;
     }
 
     void ServerConfig::set_basic_auth(bool basic_auth_)
@@ -120,9 +120,9 @@ enum Param {
       basic_auth.setparam(basic_auth_);
     }
 
-    std::string ServerConfig::get_basic_auth_file()
+    Serverparameter<std::string>& ServerConfig::get_basic_auth_file()
     {
-      return basic_auth_file.getparam();
+      return basic_auth_file;
     }
 
     void ServerConfig::set_basic_auth_file(std::string basic_auth_file_)

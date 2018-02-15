@@ -104,21 +104,37 @@ int main(int argc, char* argv[])
 
 
     }
-        // FIXME if error in the parsing, return 2
+
+    //Checking Parsing Errors
+    for (int i = 0; i < nbserv; i++)
+    {
+      if (!server_array[i]->get_server_name().get())
+        return 2;
+      if (!server_array[i]->get_port().get())
+        return 2;
+      if (!server_array[i]->get_ip().get())
+        return 2;
+      if (!server_array[i]->get_root_dir().get())
+        return 2;
+    }
   
   
- 
+/* 
   for (int i = 0; i < nbserv; i++)
   {
-    std::cout << server_array[i]->get_port() << std::endl;
-    std::cout << server_array[i]->get_ip() << std::endl;
+    std::cout << server_array[i]->get_port().getparam() << std::endl;
+    std::cout << server_array[i]->get_ip().getparam() << std::endl;
+    if (server_array[i]->get_cgi_ext().get())
+      std::cout << "Param: true" << std::endl;
+    else
+      std::cout << "Param: false" << std::endl;
   }
-
+*/
 
     std::vector<HTTPServerOptions> servers_options;
     for (int i = 0; i < nbserv; i++)
     {
-      HTTPServerOptions options(atoi(server_array[i]->get_port().c_str()), 8, server_array[i]->get_ip());
+      HTTPServerOptions options(atoi(server_array[i]->get_port().getparam().c_str()), 8, server_array[i]->get_ip().getparam());
       servers_options.push_back(options);
     }
     ServersHandler servers_handler(servers_options);
