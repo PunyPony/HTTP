@@ -8,8 +8,8 @@
 #include <HTTPServerOptions.hh>
 #include <ThreadPool.hh>
 #include <ServersHandler.hh>
-
-
+#include <ConfigOptions.hh>
+#include <ServerConfig.hh>
 
 int main(int argc, char* argv[])
 {
@@ -43,23 +43,67 @@ int main(int argc, char* argv[])
     //Create array of server to delimit each server config
     std::vector<toml::Table> server = toml::get<toml::Array<toml::Table> >(data.at("server"));
 
-    //Create variables for each element of server
-    std::string server_name = toml::get<toml::String>(server.at(0).at("server_name"));    
-    std::string port = toml::get<toml::String>(server.at(0).at("port"));    
-    std::string ip = toml::get<toml::String>(server.at(0).at("ip"));    
-    std::string root_dir = toml::get<toml::String>(server.at(0).at("root_dir"));    
+    int nbserv = 0;
+    for (auto it = server.cbegin(); it != server.cend(); ++it)
+      nbserv++;
 
-    std::cout << log_file << std::endl;
-    std::cout << dry_run << std::endl;
-    std::cout << "\n" << std::endl;
-    std::cout << server_name << std::endl;
-    std::cout << port << std::endl;
-    std::cout << ip << std::endl;
-    std::cout << root_dir <<std::endl;
-    // FIXME if error in the parsing, return 2
+   // ServerConfig *server_array[nbserv];
+   
+    std::vector<ServerConfig*> server_array(nbserv);
 
-    //return 0;
+    for (int i = 0; i < nbserv ; i++)
+    {
+      server_array[i] = new ServerConfig; 
+      
+      if (server.at(i).count("server_name"))
+        server_array[i]->set_server_name(toml::get<toml::String>(
+              server.at(i).at("server_name")));
+
+      if (server.at(i).count("port"))
+        server_array[i]->set_port(toml::get<toml::String>(
+            server.at(i).at("port")));
+
+      if (server.at(i).count("ip"))
+        server_array[i]->set_ip(toml::get<toml::String>(
+            server.at(i).at("ip")));
+
+      if (server.at(i).count("root_dir"))
+        server_array[i]->set_root_dir(toml::get<toml::String>(
+            server.at(i).at("root_dir")));
+
+      if (server.at(i).count("gzip"))
+        server_array[i]->set_gzip(toml::get<bool>(
+            server.at(i).at("gzip")));
+
+      if (server.at(i).count("log"))
+        server_array[i]->set_log(toml::get<bool>(
+            server.at(i).at("log")));
+
+      if (server.at(i).count("cgi_ext"))
+        server_array[i]->set_cgi_ext(toml::get<toml::String>(
+            server.at(i).at("cgi_ext")));
+
+      if (server.at(i).count("ssl_certificate"))
+        server_array[i]->set_ssl_certificate(toml::get<toml::String>(
+            server.at(i).at("ssl_certificate")));
+
+      if (server.at(i).count("ssl_certificate_key"))
+        server_array[i]->set_ssl_certificate_key(toml::get<toml::String>(
+            server.at(i).at("ssl_certificate_key")));
+
+      if (server.at(i).count("basic_auth"))
+        server_array[i]->set_basic_auth(toml::get<bool>(
+            server.at(i).at("basic_auth")));
+
+      if (server.at(i).count("basic_auth_file"))
+        server_array[i]->set_basic_auth_file(toml::get<toml::String>(
+            server.at(i).at("basic_auth_file")));
+
+
+    }
+        // FIXME if error in the parsing, return 2
   }
+  
   std::vector<HTTPServerOptions> servers_options;
   HTTPServerOptions options(6667, 8, "0.0.0.0");
 

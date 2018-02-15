@@ -17,6 +17,7 @@ set(SRC
     src/HTTPServer.cc
     src/RequestHandler.cc
     src/ResponseBuilder.cc
+    src/ServerConfig.cc
 )
 
 add_executable(myhttpd ${SRC})
