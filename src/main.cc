@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
     //return 0;
   }
   std::vector<HTTPServerOptions> servers_options;
-  HTTPServerOptions options(6669, 0, "0.0.0.0");
+  HTTPServerOptions options(6667, 0, "0.0.0.0");
 
   servers_options.push_back(options);
   ServersHandler servers_handler(servers_options);
