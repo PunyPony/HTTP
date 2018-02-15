@@ -40,31 +40,6 @@ std::string get_request(int socketFileDescriptor)
     return readData;
 }
 
-int parse_request_line(std::string request)
-{
-  return 0;
-}
-
-int parse_general_header(std::string request)
-{
-  return 0;
-}
-
-int parse_request_header(std::string request)
-{
-  return 0;
-}
-
-int parse_entity_header(std::string request)
-{
-  return 0;
-}
-
-int parse_body(std::string request)
-{
-  return 0;
-}
-
 std::string get_token(const std::string& request, const std::string& delimiter)
 {
   return request.substr(0, request.find(delimiter));
@@ -73,6 +48,47 @@ std::string get_token(const std::string& request, const std::string& delimiter)
 std::string get_request_rest(std::string& request, const std::string& delimiter)
 {
   return request.erase(0, request.find(delimiter) + delimiter.length());
+}
+
+int parse_fields(std::string message_header)
+{
+  std::string delimiter = ":";
+  std::string field = get_token(message_header, delimiter);
+  if (field.empty())
+    return -1;
+  std::string value = get_request_rest(message_header, delimiter);
+  return 0;
+}
+
+int parse_request_line(std::string request)
+{
+  return 0;
+}
+
+int parse_general_header(std::string message_header)
+{
+  if (parse_fields(message_header))
+    return -1;
+  return 0;
+}
+
+int parse_request_header(std::string message_header)
+{
+  if (parse_fields(message_header))
+    return -1;
+  return 0;
+}
+
+int parse_entity_header(std::string message_header)
+{
+  if (parse_fields(message_header))
+    return -1;
+  return 0;
+}
+
+int parse_body(std::string request)
+{
+  return 0;
 }
 
 int parse_request(std::string request)
@@ -88,16 +104,17 @@ int parse_request(std::string request)
   if (parse_request_line(get_token(request, delimiter)));
     return -1;
 
-  std::string rest = get_token(get_request_rest(request, delimiter), delimiter);
+  std::string rest = get_request_rest(request, delimiter);
   while (!rest.empty())
   {
-    if (parse_general_header(rest) == -1
-        && parse_request_header(rest) == -1
-        && parse_entity_header(rest) == -1)
+    std::string next_token = get_token(rest, delimiter);
+    if (parse_general_header(next_token) == -1
+        && parse_request_header(next_token) == -1
+        && parse_entity_header(next_token) == -1)
       return -1;
-    std::string rest = get_token(get_request_rest(request, delimiter), delimiter);
+    rest = get_request_rest(request, delimiter);
   }
-  if (parse_body(get_token(get_request_rest(request, delimiter), delimiter)))
+  if (parse_body(get_token(request, delimiter)))
     std::cout << "Body found" << std::endl;
 
   return 0;

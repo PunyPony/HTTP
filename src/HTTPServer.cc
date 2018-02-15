@@ -87,6 +87,7 @@ std::string yologet_request(int client_sock)
     request.resize(totalsize + 1);
     return request;
 }
+
 request_type get_request_type(std::string request, void*& params)
 {
     request = request;
