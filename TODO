@@ -1,6 +1,8 @@
 **************************************TODO************************************
 
 1. Server Configuration
+  a. Basic Parsing:         OK
+  b. Manage Custom Errors:  KO
 2. Basic HTTP
 3. Common Gateway Interface
 4. Multiple Clients
