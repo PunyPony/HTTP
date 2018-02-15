@@ -10,14 +10,12 @@ namespace ugly
 }
 
 ServersHandler::ServersHandler(std::vector<HTTPServerOptions> options)
-    : servers_()
 {
     ugly::server_handler_ = this;
     SetSignals();
-    for (std::vector<HTTPServerOptions>::iterator it = options.begin(); 
-    it != options.end(); ++it)
+    for (auto it : options)
     {
-        HTTPServer server(*it);
+        HTTPServer server(it);
         servers_.push_back(&server);
         server.start();
     }
@@ -33,14 +31,6 @@ void signal_handler(int signal)
 {
     ugly::SignalStatus = signal;
     std::cout << "SIGINT : Signal value : " << ugly::SignalStatus << '\n';
-    /*
-    for (std::vector<HTTPServer*>::iterator it = ugly::server_handler_->get_servers().begin(); 
-    it != ugly::server_handler_->get_servers().end(); ++it)
-    {
-        std::cout << "test" << '\n';  
-        (*it)->stop();
-    }
-    */
     for (auto it : ugly::server_handler_->get_servers())
         it->stop();
 }
