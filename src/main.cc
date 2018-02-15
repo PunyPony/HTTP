@@ -38,8 +38,6 @@ int main(int argc, char* argv[])
   bool dry_run = toml::get<bool>(data.at("dry_run"));
   
   
-  if (dry_run)
-  {
     //Create array of server to delimit each server config
     std::vector<toml::Table> server = toml::get<toml::Array<toml::Table> >(data.at("server"));
 
@@ -56,8 +54,6 @@ int main(int argc, char* argv[])
 
     for (int i = 0; i < nbserv ; i++)
     {
-    //  server_array[i] = new ServerConfig; 
-      
       if (server.at(i).count("server_name"))
         server_array[i]->set_server_name(toml::get<toml::String>(
               server.at(i).at("server_name")));
@@ -101,8 +97,6 @@ int main(int argc, char* argv[])
       if (server.at(i).count("basic_auth_file"))
         server_array[i]->set_basic_auth_file(toml::get<toml::String>(
             server.at(i).at("basic_auth_file")));
-
-
     }
 
     //Checking Parsing Errors
@@ -131,15 +125,18 @@ int main(int argc, char* argv[])
   }
 */
 
-    std::vector<HTTPServerOptions> servers_options;
-    for (int i = 0; i < nbserv; i++)
+    //if dry_run set to true, just check and return. Launch server otherwise.
+    if (!dry_run)
     {
-      HTTPServerOptions options(atoi(server_array[i]->get_port().getparam().c_str()), 8, server_array[i]->get_ip().getparam());
-      servers_options.push_back(options);
+      std::vector<HTTPServerOptions> servers_options;
+      for (int i = 0; i < nbserv; i++)
+      {
+        HTTPServerOptions options(atoi(server_array[i]->get_port().getparam().c_str()), 8, server_array[i]->get_ip().getparam());
+        servers_options.push_back(options);
+      }
+      ServersHandler servers_handler(servers_options);
+      return 0;
     }
-    ServersHandler servers_handler(servers_options);
-  
-  }  
-  return 0;
-
+    else
+      return 0;
 }
