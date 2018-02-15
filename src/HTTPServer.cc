@@ -71,7 +71,7 @@ struct threadinfo
     std::string request;
 };
 
-std::string get_request(int client_sock)
+std::string yologet_request(int client_sock)
 {
     size_t blocksize = 500;
     size_t totalsize = 0;
@@ -97,7 +97,7 @@ request_type get_request_type(std::string request, void*& params)
 }
 std::string forge_error_response(error_type err)
 {
-    return "ERROR " + std::to_string(err) + ": ça marche pas lol \n";
+    return "ERROR " + std::to_string(err) + ": ?a marche pas lol \n";
 }
 std::string forge_response(request_type rqtype, void* params)
 {
@@ -199,7 +199,7 @@ int HTTPServer::start()
             {
                 std::cout << "c partit ma grosse bite!" << std::endl;
                 //start of analyse
-                std::string request = get_request(client_sock);
+                std::string request = yologet_request(client_sock);
                 void* params = NULL;
                 request_type rqtype = get_request_type(request, params);
                 std::string response = forge_response(rqtype, params);

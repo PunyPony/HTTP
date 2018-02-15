@@ -51,9 +51,12 @@ int main(int argc, char* argv[])
    
     std::vector<ServerConfig*> server_array(nbserv);
 
+    for (int i = 0; i < nbserv; i++)
+      server_array[i] = new ServerConfig;
+
     for (int i = 0; i < nbserv ; i++)
     {
-      server_array[i] = new ServerConfig; 
+    //  server_array[i] = new ServerConfig; 
       
       if (server.at(i).count("server_name"))
         server_array[i]->set_server_name(toml::get<toml::String>(
@@ -102,15 +105,24 @@ int main(int argc, char* argv[])
 
     }
         // FIXME if error in the parsing, return 2
+  
+  
+ 
+  for (int i = 0; i < nbserv; i++)
+  {
+    std::cout << server_array[i]->get_port() << std::endl;
+    std::cout << server_array[i]->get_ip() << std::endl;
   }
   
   std::vector<HTTPServerOptions> servers_options;
-  HTTPServerOptions options(6667, 0, "0.0.0.0");
 
-  servers_options.push_back(options);
-  ServersHandler servers_handler(servers_options);
+    HTTPServerOptions options(4444, 8, "0.0.0.0");
+    servers_options.push_back(options);
   
+
+    ServersHandler servers_handler(servers_options);
   
+  }  
   return 0;
 
 }
