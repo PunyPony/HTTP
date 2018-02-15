@@ -113,13 +113,14 @@ int main(int argc, char* argv[])
     std::cout << server_array[i]->get_port() << std::endl;
     std::cout << server_array[i]->get_ip() << std::endl;
   }
-  
-  std::vector<HTTPServerOptions> servers_options;
 
-    HTTPServerOptions options(4444, 8, "0.0.0.0");
-    servers_options.push_back(options);
-  
 
+    std::vector<HTTPServerOptions> servers_options;
+    for (int i = 0; i < nbserv; i++)
+    {
+      HTTPServerOptions options(atoi(server_array[i]->get_port().c_str()), 8, server_array[i]->get_ip());
+      servers_options.push_back(options);
+    }
     ServersHandler servers_handler(servers_options);
   
   }  
