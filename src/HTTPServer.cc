@@ -92,7 +92,7 @@ request_type get_request_type(std::string request, void*& params)
     request = request;
     //fixme: mutiple request types possible?
     params = new struct fileparams;
-    ((struct fileparams*)params)->path = "testfile";
+    ((struct fileparams*)params)->path = "../testfile";
     return RQFILE;
 }
 std::string forge_error_response(error_type err)
@@ -171,10 +171,7 @@ int HTTPServer::start()
     }
 
     int epollfd = epoll_create1(0);
-    struct epoll_event events {
-        EPOLLIN,
-        { 0 }
-    };
+    struct epoll_event events[10]{ 0 };
     int debug_clientsock; //debug variable to test for 1 client (last connected)
     for (;;)
     {
@@ -184,22 +181,26 @@ int HTTPServer::start()
         if (client_sock != -1)
         {
             std::cout << "New client" << std::endl;
-            if (-1 == epoll_ctl(epollfd, EPOLL_CTL_ADD, client_sock, &events))
+            struct epoll_event tmpevents { 
+                EPOLLIN,
+                { .fd = client_sock }
+            };
+            if (-1 == epoll_ctl(epollfd, EPOLL_CTL_ADD, client_sock, &tmpevents))
             {
                 std::cout << "epoll_ctl error" << std::endl;
                 return -1;
             }
             debug_clientsock = client_sock;
         }
-        int waitres = epoll_wait(epollfd, &events, 1, 0); //nb of events?
-        if (waitres > 0)
+        int waitres = epoll_wait(epollfd, events, 10, 0); //nb of events?
+        for(int i = 0; i < waitres; i++)
         {
-            client_sock = debug_clientsock;
-            DefaultThreadPool::submitJob([client_sock]() //fixme: sock where event occured
+            client_sock = events[i].data.fd;
+            std::string request = yologet_request(client_sock);
+            DefaultThreadPool::submitJob([client_sock, request]() //fixme: sock where event occured
             {
                 std::cout << "c partit ma grosse bite!" << std::endl;
                 //start of analyse
-                std::string request = yologet_request(client_sock);
                 void* params = NULL;
                 request_type rqtype = get_request_type(request, params);
                 std::string response = forge_response(rqtype, params);
