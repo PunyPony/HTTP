@@ -3,7 +3,7 @@
 #include <string.h>
 #include "zlib.h"
 
-//To remove
+//To remove / Compile with -lz
 int main()
 {
   bool accept_encoding_gzip = true;
