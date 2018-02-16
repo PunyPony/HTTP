@@ -119,9 +119,7 @@ public:
         try
         {
             for (std::uint32_t i = 0u; i < numThreads; ++i)
-            {
-                m_threads.emplace_back(&ThreadPool::worker, this);
-            }
+              m_threads.emplace_back(&ThreadPool::worker, this);
         }
         catch (...)
         {
@@ -175,9 +173,7 @@ private:
         {
             std::unique_ptr<IThreadTask> pTask{ nullptr };
             if (m_workQueue.waitPop(pTask))
-            {
-                pTask->execute();
-            }
+              pTask->execute();
         }
     }
 
@@ -189,12 +185,8 @@ private:
         m_done = true;
         m_workQueue.invalidate();
         for (auto& thread : m_threads)
-        {
-            if (thread.joinable())
-            {
-                thread.join();
-            }
-        }
+          if (thread.joinable())
+            thread.join();
     }
 
 private:
