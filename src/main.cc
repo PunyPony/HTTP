@@ -13,9 +13,10 @@
 
 int main(int argc, char* argv[])
 {
-  if (argc < 2)
+  //Check arguments
+  if (argc != 2)
   {
-    printf("Missing file in command line. \n");
+    std::cerr << "usage: ./myhttpd server.conf" << std::endl;
     return 1;
   }
 
@@ -34,7 +35,7 @@ int main(int argc, char* argv[])
   //FIXME CHECK VALUES - IF NONE THEN RETURN 2
 
   //Get 2 first elements: log_file and dry_run
-  std::string log_file = toml::get<toml::String>(data.at("log_file"));
+//  std::string log_file = toml::get<toml::String>(data.at("log_file"));
   bool dry_run = toml::get<bool>(data.at("dry_run"));
   
   
@@ -134,6 +135,25 @@ int main(int argc, char* argv[])
         HTTPServerOptions options(atoi(server_array[i]->get_port().getparam().c_str()), 8, server_array[i]->get_ip().getparam());
         servers_options.push_back(options);
       }
+
+      //Check log_file
+      std::string log_file;
+          try {
+               log_file = toml::get<toml::String>(data.at("log_file"));
+               std::cout << "Log file activated" << std::endl;
+              }
+          catch (...){
+              std::cout << "No log file required." <<std::endl;
+          }
+
+          try {
+            if (data.count("log_file"))
+              std::cout << "Launch server with log_file" << std::endl;
+          }
+          catch(...){
+            std::cout << "Launch server without log_file" << std::endl;
+          }
+
       ServersHandler servers_handler(servers_options);
       return 0;
     }
