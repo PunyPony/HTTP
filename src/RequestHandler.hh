@@ -24,5 +24,5 @@ class RequestHandler {
   inline auto submitJob(Func&& func, Args&&... args);
 
   private:
-  ResponseBuilder reponse_builder_;
+  //ResponseBuilder reponse_builder_;
 };

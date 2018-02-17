@@ -94,45 +94,19 @@ int HTTPServer::start()
             debug_clientsock = client_sock;
         }
         int waitres = epoll_wait(epollfd, events, 10, 0); //nb of events?
-        for(int i = 0; i < waitres; i++)
+        for (int i = 0; i < waitres; i++)
         {
             client_sock = events[i].data.fd;
             std::string request = get_request(client_sock);
             DefaultThreadPool::submitJob([client_sock, request]() //fixme: sock where event occured
             {
                 //start of analyse
-                /*
-                void* params = NULL;
-                request_type rqtype = get_request_type(request, params);
-                std::string response = forge_response(rqtype, params);
-
-                std::cout << "response is" << std::endl << response << "end of response" << std::endl;
-                std::cout << "sending response:..." << std::endl;
-
-                send_reponse(client_sock, response);
-
-                std::cout << "done" << std::endl;
-                */
+                ResponseBuilder builder(client_sock, request);
+                builder.analyse_request();
+                builder.generate_response();
+                builder.send_reponse();
                 //close(client_sock); //fixme: should we close this //end of analyse
             }
-
-             /*
-             {
-                char buffer[200] = { 0 };
-                int ret = recv(client_sock, buffer, 199, 0);
-                if (ret == 0 || ret == -1)
-                {
-                    //std::cout << "Error recv" << std::endl;
-                    return -1;
-                }
-                std::cout << "New request from client: " << buffer << std::endl;
-                ret = send(client_sock, buffer, ret, 0);
-                if (ret == 0 || ret == -1)
-                {
-                    std::cout << "error send" << std::endl;
-                }
-            }
-            */
             );
         }
     }
