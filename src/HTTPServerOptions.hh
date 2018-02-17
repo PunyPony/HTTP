@@ -8,8 +8,8 @@
  */
 class HTTPServerOptions {
  public:
- HTTPServerOptions(int listen_port, int threads, std::string ip);
- 
+// HTTPServerOptions(int listen_port, int threads, std::string ip, std::string root_dir);
+  HTTPServerOptions(Serverconfig server_array);
   /**
    * Number of threads to start to handle requests. Note that this excludes
    * the thread you call `HTTPServer.start()` in.
@@ -19,11 +19,13 @@ class HTTPServerOptions {
    * XXX: Maybe support not creating any more worker threads and doing all
    *      the work in same thread when `threads == 0`.
    */
-  const int threads_;
-  const int listen_port_;
-  const std::string ip_;
-  private:
+  Serverconfig& get_server_array();
+  
+ private:
   HTTPServerOptions();
+  Serverconfig server_array_;
+
+
   /**
    * This idle timeout serves two purposes -
    *
