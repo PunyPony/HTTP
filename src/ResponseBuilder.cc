@@ -23,7 +23,7 @@ ResponseBuilder::ResponseBuilder(int client_sock, std::string request, HTTPServe
 int ResponseBuilder::analyse_request()
 {
     req.get_request_type();
-    //req.parse_request(request_);
+    req.parse_request(request_);
     return 0;
 }
 
@@ -87,7 +87,6 @@ int Request::parse_request_line(std::string request_line)
     std::cout << "method " << method <<std::endl;
     R_->type_ = RQFILE;
     
-    return 0;
     get_request_rest(request_line, delimiter);
     std::string request_uri = get_token(request_line, delimiter);
     std::cout << "request_uri " << request_uri <<std::endl;
@@ -97,6 +96,9 @@ int Request::parse_request_line(std::string request_line)
     get_request_rest(request_line, delimiter);
     std::string http_version = get_token(request_line, delimiter);
     std::cout << "http_version " << http_version <<std::endl;
+
+    if (method.empty() || request_uri.empty() || http_version.empty())
+        return -1;
     
     return 0;
 }
