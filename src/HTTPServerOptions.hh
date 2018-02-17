@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "ServerConfig.hh"
 /**
  * Configuration options for HTTPServer
  *
@@ -9,7 +10,7 @@
 class HTTPServerOptions {
  public:
 // HTTPServerOptions(int listen_port, int threads, std::string ip, std::string root_dir);
-  HTTPServerOptions(Serverconfig server_array);
+  HTTPServerOptions(ServerConfig& server_tab);
   /**
    * Number of threads to start to handle requests. Note that this excludes
    * the thread you call `HTTPServer.start()` in.
@@ -19,11 +20,11 @@ class HTTPServerOptions {
    * XXX: Maybe support not creating any more worker threads and doing all
    *      the work in same thread when `threads == 0`.
    */
-  Serverconfig& get_server_array();
+  ServerConfig& get_server_tab();
   
  private:
-  HTTPServerOptions();
-  Serverconfig server_array_;
+ // HTTPServerOptions();
+  ServerConfig server_tab_;
 
 
   /**

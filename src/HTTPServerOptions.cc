@@ -2,11 +2,11 @@
 #include <string>
 #include <HTTPServerOptions.hh>
 
- HTTPServerOptions::HTTPServerOptions(Serverconfig server_array)
- : server_array_(server_array)
+ HTTPServerOptions::HTTPServerOptions(ServerConfig& server_tab)
+ : server_tab_(server_tab)
  {}
 
- Serverconfig& HTTPServerOptions::get_server_array()
+ ServerConfig& HTTPServerOptions::get_server_tab()
 {
-  return server_array_;
+  return server_tab_;
 }
