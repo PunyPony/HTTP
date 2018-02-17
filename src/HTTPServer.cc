@@ -105,6 +105,13 @@ int HTTPServer::start(int sock)
         {
             int requested_sock = events[i].data.fd;
             std::string request = get_request(requested_sock);
+            if (!request.size())
+            {
+                if (-1 == epoll_ctl(epollfd, EPOLL_CTL_DEL, requested_sock, NULL)) {
+                    //fixme: log error
+                }
+                continue;
+            }
             DefaultThreadPool::submitJob([requested_sock, request, this]() //fixme: sock where event occured
             {
                 //start of analyse
