@@ -117,7 +117,12 @@ int HTTPServer::start()
 }
 
 void HTTPServer::stopListening()
-{}
+{
+    while (1)
+    {
+        std::cout << "CACA" << std::endl;
+    }
+}
 
 void HTTPServer::stop()
 {

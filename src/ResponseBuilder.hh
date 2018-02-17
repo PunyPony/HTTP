@@ -36,6 +36,7 @@ public:
     int parse_general_header(std::string message_header);
     int parse_request_header(std::string message_header);
     int parse_entity_header(std::string message_header);
+    int parse_header(std::string message_header);
     int parse_body(std::string request);
     int parse_request(std::string request);
     int get_request_type();

@@ -45,5 +45,5 @@ void signal_ignored(int signal)
 void SetSignals()
 {
     std::signal(SIGINT, signal_handler);
-    std::signal(SIGABRT || SIGSTOP || SIGFPE || SIGILL || SIGTERM, signal_ignored);
+    std::signal(SIGABRT || SIGSTOP || SIGTSTP || SIGFPE || SIGILL || SIGTERM, signal_ignored);
 }

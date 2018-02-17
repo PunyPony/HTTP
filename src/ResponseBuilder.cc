@@ -20,7 +20,8 @@ ResponseBuilder::ResponseBuilder(int client_sock, std::string request)
 
 int ResponseBuilder::analyse_request()
 {
-    req.get_request_type();
+    //req.get_request_type();
+    req.parse_request(request_);
 }
 
 int ResponseBuilder::generate_response()
@@ -80,10 +81,15 @@ int Request::parse_request_line(std::string request)
   return 0;
 }
 
-int Request::parse_general_header(std::string message_header)
+int Request::parse_header(std::string message_header)
 {
   if (parse_fields(message_header))
     return -1;
+  return 0;
+}
+
+int Request::parse_general_header(std::string message_header)
+{
   return 0;
 }
 
@@ -118,14 +124,13 @@ int Request::parse_request(std::string request)
 
   if (parse_request_line(get_token(request, delimiter)));
     return -1;
-
+  std::cout << "request_line" << std::endl;
   std::string rest = get_request_rest(request, delimiter);
   while (!rest.empty())
   {
+    std::cout << "yolo" << std::endl;
     std::string next_token = get_token(rest, delimiter);
-    if (parse_general_header(next_token) == -1
-        && parse_request_header(next_token) == -1
-        && parse_entity_header(next_token) == -1)
+    if (parse_header(next_token) == -1)
       return -1;
     rest = get_request_rest(request, delimiter);
   }
