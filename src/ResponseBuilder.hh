@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-
+#include "HTTPServerOptions.hh"
 
 //class Response;
 //class Request;
@@ -62,7 +62,7 @@ protected:
     friend class Request;
     friend class Response;
 public:
-    ResponseBuilder(int client_sock, std::string request);
+    ResponseBuilder(int client_sock, std::string request, HTTPServerOptions& options);
     int analyse_request();
     int generate_response();
     int send_reponse();
@@ -75,6 +75,7 @@ protected:
     void* params_;
     std::string request_;
     std::string response_;
+    HTTPServerOptions& options_;
 private:
     Request req{ this };
     Response res{ this };
