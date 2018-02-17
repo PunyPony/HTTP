@@ -44,7 +44,7 @@ private:
 
 int HTTPServer::init(int& sock) //fix les acc�s de merde
 {
-    sock = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+    sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1)
     {
         std::cout << "sock fail" << std::endl;
@@ -76,26 +76,31 @@ int HTTPServer::init(int& sock) //fix les acc�s de merde
 int HTTPServer::start(int sock)
 {
     int epollfd = epoll_create1(0);
+    auto tmp = std::thread([sock, epollfd]() {
+        for (;;)
+        {
+            struct sockaddr_in sockin;
+            socklen_t socklen = sizeof(struct sockaddr_in);
+            int client_sock = accept4(sock, (sockaddr*)&sockin, &socklen, SOCK_NONBLOCK);
+            if (client_sock != -1)
+            {
+                std::cout << "New client" << std::endl;
+                struct epoll_event tmpevents {
+                    EPOLLIN,
+                    { .fd = client_sock }
+                };
+                if (-1 == epoll_ctl(epollfd, EPOLL_CTL_ADD, client_sock, &tmpevents))
+                {
+                    std::cout << "epoll_ctl error" << std::endl;
+                    return -1;
+                }
+            }
+        }
+    });
     struct epoll_event events[10]{ 0 };
     for (;;)
     {
-        struct sockaddr_in sockin;
-        socklen_t socklen = sizeof(struct sockaddr_in);
-        int client_sock = accept4(sock, (sockaddr*)&sockin, &socklen, SOCK_NONBLOCK);
-        if (client_sock != -1)
-        {
-            std::cout << "New client" << std::endl;
-            struct epoll_event tmpevents {
-                EPOLLIN,
-                { .fd = client_sock }
-            };
-            if (-1 == epoll_ctl(epollfd, EPOLL_CTL_ADD, client_sock, &tmpevents))
-            {
-                std::cout << "epoll_ctl error" << std::endl;
-                return -1;
-            }
-        }
-        int waitres = epoll_wait(epollfd, events, 10, 0); //nb of events?
+        int waitres = epoll_wait(epollfd, events, 10, -1); //nb of events?
         for (int i = 0; i < waitres; i++)
         {
             std::cout << waitres << std::endl;
@@ -104,11 +109,11 @@ int HTTPServer::start(int sock)
             DefaultThreadPool::submitJob([client_sock, request]() //fixme: sock where event occured
             {
                 //start of analyse
-                ResponseBuilder builder(client_sock, request);
+                ResponseBuilder builder(requested_sock, request, this->options_);
                 builder.analyse_request();
                 builder.generate_response();
                 builder.send_reponse();
-                //close(client_sock); //fixme: should we close this //end of analyse
+                //close(requested_sock); //fixme: should we close this //end of analyse
             }
             );
         }

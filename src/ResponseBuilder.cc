@@ -10,13 +10,14 @@
 #include <unistd.h>
 #include <fstream>
 
-#include <ResponseBuilder.hh>
+#include "ResponseBuilder.hh"
 
-ResponseBuilder::ResponseBuilder(int client_sock, std::string request)
+ResponseBuilder::ResponseBuilder(int client_sock, std::string request, HTTPServerOptions& options)
+    :options_(options)
 {
     client_sock_ = client_sock;
     request_ = std::move(request);
-    sleep(1);
+    //sleep(1);
 }
 
 int ResponseBuilder::analyse_request()
@@ -213,6 +214,39 @@ std::string Response::forge_error_response(error_type err)
     return "ERROR " + std::to_string(err) + " : " + error_message + "\n";
 }
 
+std::string formatGETanswer(std::string file) {
+    time_t rawtime;
+    struct tm* timeinfo;
+    time(&rawtime);
+    timeinfo = gmtime(&rawtime);
+    char buffer[100];
+
+    //Protocol StatusCode ReasonPhrase
+    std::string ans;
+    std::string protocol("HTTP/1.1 "); //FIXME by real protocol variable
+    std::string statuscode("200 "); //FIXME by real statuscode variable
+    std::string reasonphrase("OK\n"); //FIXME by real reasonphrase variable
+    ans = protocol + statuscode + reasonphrase;
+
+    //Date
+    ans.append("Date: ");
+    strftime(buffer, 100, "%a, %d %b %G %T GMT", timeinfo);
+    std::string tmp(buffer);
+    ans.append(tmp);
+    ans.append("\n");
+
+    //File Length
+    ans.append("Content-length: ");
+    std::string length = std::to_string(file.length());
+    ans.append(length);
+    ans.append("\n\n"); //FIXME to remove /n/n if other header afterward
+
+                        //Content
+    ans.append(file);
+
+    return ans;
+}
+
 int Response::forge_response()
 {
     switch (R_->type_)
@@ -220,7 +254,7 @@ int Response::forge_response()
     case RQFILE:
     {
         struct fileparams* definedparams = (struct fileparams*)R_->params_;
-        std::string path = definedparams->path;
+        std::string path = /*R_->options_.get_server_tab().get_root_dir().getparam() + */definedparams->path;
         //fixme: check path bounds
         std::ifstream file(path);
         if (!file.good())
@@ -236,7 +270,7 @@ int Response::forge_response()
 
             content.assign((std::istreambuf_iterator<char>(file)),
                 std::istreambuf_iterator<char>());
-            R_->response_ = content;
+            R_->response_ = formatGETanswer(content);
         }
         delete definedparams;
         break;
