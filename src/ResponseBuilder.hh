@@ -47,11 +47,9 @@ class Response
 {
 public:
     Response(ResponseBuilder* R) { R_ = R; }
-    void error(std::string msg, int code);
     std::string forge_error_response(error_type err);
     int forge_response();
     std::string response_;
-    void send_reponse(std::string response);
 private:
     ResponseBuilder * R_;
 };

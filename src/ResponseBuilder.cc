@@ -15,17 +15,21 @@
 ResponseBuilder::ResponseBuilder(int client_sock, std::string request)
 {
     client_sock_ = client_sock;
-    request_ = request;
+    request_ = std::move(request);
+    sleep(1);
 }
 
 int ResponseBuilder::analyse_request()
 {
     req.get_request_type();
+    req.parse_request(request_);
+    return 0;
 }
 
 int ResponseBuilder::generate_response()
 {
     res.forge_response();
+    return 0;
 }
 
 std::string get_request(int client_sock)
@@ -37,17 +41,17 @@ std::string get_request(int client_sock)
     int readResult = 0;
     std::cout << "Receiving chunk... ";
     while ((readResult = read(client_sock, buffer, BUFFER_SIZE)) > 0)
-      readStream << buffer;
+        readStream << buffer;
 
     if (readResult == 0)
     {
-      // Timeout - handle that. You could try waiting again, close the socket...
-      //return 1;
+        // Timeout - handle that. You could try waiting again, close the socket...
+        //return 1;
     }
     if (readResult == -1)
     {
-      // Handle the error
-      //return 1;
+        // Handle the error
+        //return 1;
     }
 
     std::string readData = readStream.str();
@@ -57,82 +61,82 @@ std::string get_request(int client_sock)
 
 std::string Request::get_token(const std::string& request, const std::string& delimiter)
 {
-  return request.substr(0, request.find(delimiter));
+    return request.substr(0, request.find(delimiter));
 }
 
 std::string Request::get_request_rest(std::string& request, const std::string& delimiter)
 {
-  return request.erase(0, request.find(delimiter) + delimiter.length());
+    return request.erase(0, request.find(delimiter) + delimiter.length());
 }
 
 int Request::parse_fields(std::string message_header)
 {
-  std::string delimiter = ":";
-  std::string field = get_token(message_header, delimiter);
-  if (field.empty())
-    return -1;
-  std::string value = get_request_rest(message_header, delimiter);
-  return 0;
+    std::string delimiter = ":";
+    std::string field = get_token(message_header, delimiter);
+    if (field.empty())
+        return -1;
+    std::string value = get_request_rest(message_header, delimiter);
+    return 0;
 }
 
 int Request::parse_request_line(std::string request)
 {
-  return 0;
+    return 0;
 }
 
 int Request::parse_general_header(std::string message_header)
 {
-  if (parse_fields(message_header))
-    return -1;
-  return 0;
+    if (parse_fields(message_header))
+        return -1;
+    return 0;
 }
 
 int Request::parse_request_header(std::string message_header)
 {
-  if (parse_fields(message_header))
-    return -1;
-  return 0;
+    if (parse_fields(message_header))
+        return -1;
+    return 0;
 }
 
 int Request::parse_entity_header(std::string message_header)
 {
-  if (parse_fields(message_header))
-    return -1;
-  return 0;
+    if (parse_fields(message_header))
+        return -1;
+    return 0;
 }
 
 int Request::parse_body(std::string request)
 {
-  return 0;
+    return 0;
 }
 
 int Request::parse_request(std::string request)
 {
-  /*
-  Request = Request-Line
-  * (( general-header | request-header | entity-header ) CRLF )
-  CRLF
-  [ message-body ]
-  */
-  std::string delimiter = "\r\n";
+    /*
+    Request = Request-Line
+    * (( general-header | request-header | entity-header ) CRLF )
+    CRLF
+    [ message-body ]
+    */
+    std::string delimiter = "\r\n";
 
-  if (parse_request_line(get_token(request, delimiter)));
+    if (parse_request_line(get_token(request, delimiter)));
     return -1;
 
-  std::string rest = get_request_rest(request, delimiter);
-  while (!rest.empty())
-  {
-    std::string next_token = get_token(rest, delimiter);
-    if (parse_general_header(next_token) == -1
-        && parse_request_header(next_token) == -1
-        && parse_entity_header(next_token) == -1)
-      return -1;
-    rest = get_request_rest(request, delimiter);
-  }
-  if (parse_body(get_token(request, delimiter)))
-    std::cout << "Body found" << std::endl;
+    std::string rest = get_request_rest(request, delimiter);
+    while (!rest.empty())
+    {
+        std::string next_token = get_token(rest, delimiter);
+        if (parse_general_header(next_token) == -1
+            && parse_request_header(next_token) == -1
+            && parse_entity_header(next_token) == -1)
+            return -1;
+        rest = get_request_rest(request, delimiter);
+    }
+    if (parse_body(get_token(request, delimiter)))
+        std::cout << "Body found" << std::endl;
 
-  return 0;
+    return 0;
 }
 
 void ResponseBuilder::error(std::string msg, int code)
@@ -151,21 +155,21 @@ int Request::get_request_type()
 
 std::string Response::forge_error_response(error_type err)
 {
-  std::string error_message;
-  switch (err)
-  {
+    std::string error_message;
+    switch (err)
+    {
     case ACCESS_DENIED:
-      error_message = "ACCESS_DENIED";
-      break;
+        error_message = "ACCESS_DENIED";
+        break;
     case FILE_NOT_FOUND:
-      error_message = "FILE_NOT_FOUND";
-      break;
+        error_message = "FILE_NOT_FOUND";
+        break;
     case INTERNAL_ERROR:
-      error_message = "INTERNAL_ERROR";
-      break;
+        error_message = "INTERNAL_ERROR";
+        break;
 
-  }
-    return "ERROR " + std::to_string(err) + " : " + error_message +"\n";
+    }
+    return "ERROR " + std::to_string(err) + " : " + error_message + "\n";
 }
 
 int Response::forge_response()
@@ -199,6 +203,7 @@ int Response::forge_response()
     default:
         R_->response_ = forge_error_response(NIQUE_TA_MERE); //or INTERNAL_ERROR for less fun
     }
+    return 0;
 }
 
 int ResponseBuilder::send_reponse()

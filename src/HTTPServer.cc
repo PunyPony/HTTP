@@ -42,9 +42,9 @@ private:
 
 //END of code to move
 
-int HTTPServer::start()
+int HTTPServer::init(int& sock)
 {
-    int sock = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+    sock = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
     if (sock == -1)
     {
         std::cout << "sock fail" << std::endl;
@@ -70,10 +70,13 @@ int HTTPServer::start()
         std::cout << "listen fail" << std::endl;
         return -1;
     }
+    return 0;
+}
 
+int HTTPServer::start(int sock)
+{
     int epollfd = epoll_create1(0);
     struct epoll_event events[10]{ 0 };
-    int debug_clientsock; //debug variable to test for 1 client (last connected)
     for (;;)
     {
         struct sockaddr_in sockin;
@@ -91,7 +94,6 @@ int HTTPServer::start()
                 std::cout << "epoll_ctl error" << std::endl;
                 return -1;
             }
-            debug_clientsock = client_sock;
         }
         int waitres = epoll_wait(epollfd, events, 10, 0); //nb of events?
         for (int i = 0; i < waitres; i++)
