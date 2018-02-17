@@ -42,9 +42,9 @@ private:
 
 //END of code to move
 
-int HTTPServer::start()
+int HTTPServer::init(int& sock) //fix les accès de merde
 {
-    int sock = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
+    sock = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
     if (sock == -1)
     {
         std::cout << "sock fail" << std::endl;
@@ -52,10 +52,10 @@ int HTTPServer::start()
     }
     struct sockaddr_in addrin;
     addrin.sin_family = AF_INET;
-    addrin.sin_port = htons(options_.listen_port_);
+    addrin.sin_port = htons(atoi(options_.get_server_tab().get_port().getparam().c_str()));
 
     //convert string ip to good form
-    if (!inet_aton(options_.ip_.c_str(), &addrin.sin_addr))
+    if (!inet_aton(options_.get_server_tab().get_ip().getparam().c_str(), &addrin.sin_addr))
     {
         std::cout << "inet_aton fail" << std::endl;
         return -1;
@@ -70,10 +70,13 @@ int HTTPServer::start()
         std::cout << "listen fail" << std::endl;
         return -1;
     }
+    return 0;
+}
 
+int HTTPServer::start(int sock)
+{
     int epollfd = epoll_create1(0);
     struct epoll_event events[10]{ 0 };
-    int debug_clientsock; //debug variable to test for 1 client (last connected)
     for (;;)
     {
         struct sockaddr_in sockin;
@@ -91,7 +94,6 @@ int HTTPServer::start()
                 std::cout << "epoll_ctl error" << std::endl;
                 return -1;
             }
-            debug_clientsock = client_sock;
         }
         int waitres = epoll_wait(epollfd, events, 10, 0); //nb of events?
         for (int i = 0; i < waitres; i++)

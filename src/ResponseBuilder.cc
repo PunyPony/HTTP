@@ -15,18 +15,21 @@
 ResponseBuilder::ResponseBuilder(int client_sock, std::string request)
 {
     client_sock_ = client_sock;
-    request_ = request;
+    request_ = std::move(request);
+    sleep(1);
 }
 
 int ResponseBuilder::analyse_request()
 {
     req.get_request_type();
-    req.parse_request(request_);
+    //req.parse_request(request_);
+    return 0;
 }
 
 int ResponseBuilder::generate_response()
 {
     res.forge_response();
+    return 0;
 }
 
 std::string get_request(int client_sock)
@@ -38,17 +41,17 @@ std::string get_request(int client_sock)
     int readResult = 0;
     std::cout << "Receiving chunk... ";
     while ((readResult = read(client_sock, buffer, BUFFER_SIZE)) > 0)
-      readStream << buffer;
+        readStream << buffer;
 
     if (readResult == 0)
     {
-      // Timeout - handle that. You could try waiting again, close the socket...
-      //return 1;
+        // Timeout - handle that. You could try waiting again, close the socket...
+        //return 1;
     }
     if (readResult == -1)
     {
-      // Handle the error
-      //return 1;
+        // Handle the error
+        //return 1;
     }
 
     std::string readData = readStream.str();
@@ -58,34 +61,34 @@ std::string get_request(int client_sock)
 
 std::string Request::get_token(const std::string& request, const std::string& delimiter)
 {
-  return request.substr(0, request.find(delimiter));
+    return request.substr(0, request.find(delimiter));
 }
 
 std::string Request::get_request_rest(std::string& request, const std::string& delimiter)
 {
-  return request.erase(0, request.find(delimiter) + delimiter.length());
+    return request.erase(0, request.find(delimiter) + delimiter.length());
 }
 
 int Request::parse_fields(std::string message_header)
 {
-  std::string delimiter = ":";
-  std::string field = get_token(message_header, delimiter);
-  if (field.empty())
-    return -1;
-  std::string value = get_request_rest(message_header, delimiter);
-  return 0;
+    std::string delimiter = ":";
+    std::string field = get_token(message_header, delimiter);
+    if (field.empty())
+        return -1;
+    std::string value = get_request_rest(message_header, delimiter);
+    return 0;
 }
 
 int Request::parse_request_line(std::string request)
 {
-  return 0;
+    return 0;
 }
 
 int Request::parse_header(std::string message_header)
 {
-  if (parse_fields(message_header))
-    return -1;
-  return 0;
+    if (parse_fields(message_header))
+        return -1;
+    return 0;
 }
 
 int Request::parse_general_header(std::string message_header)
@@ -95,21 +98,21 @@ int Request::parse_general_header(std::string message_header)
 
 int Request::parse_request_header(std::string message_header)
 {
-  if (parse_fields(message_header))
-    return -1;
-  return 0;
+    if (parse_fields(message_header))
+        return -1;
+    return 0;
 }
 
 int Request::parse_entity_header(std::string message_header)
 {
-  if (parse_fields(message_header))
-    return -1;
-  return 0;
+    if (parse_fields(message_header))
+        return -1;
+    return 0;
 }
 
 int Request::parse_body(std::string request)
 {
-  return 0;
+    return 0;
 }
 
 int Request::parse_request(std::string request)
@@ -155,28 +158,41 @@ int Request::get_request_type()
 {
     //fixme: mutiple request types possible?
     R_->params_ = new struct fileparams;
-    ((struct fileparams*)R_->params_)->path = "../testfile";
+    ((struct fileparams*)R_->params_)->path = "/home/nicolas/projects/MyHTTPD/testfile";
     R_->type_ = RQFILE;
     return 0;
 }
 
 std::string Response::forge_error_response(error_type err)
 {
-  std::string error_message;
-  switch (err)
-  {
+    std::string error_message;
+    switch (err)
+    {
     case ACCESS_DENIED:
-      error_message = "ACCESS_DENIED";
-      break;
+        error_message = "ACCESS_DENIED";
+        break;
+    case FORBIDDEN:
+        error_message = "FORBIDDEN";
+        break;
     case FILE_NOT_FOUND:
-      error_message = "FILE_NOT_FOUND";
-      break;
+        error_message = "FILE_NOT_FOUND";
+        break;
+    case METHOD_NOT_ALLOWED:
+        error_message = "METHOD_NOT_ALLOWED";
+        break;
     case INTERNAL_ERROR:
-      error_message = "INTERNAL_ERROR";
-      break;
-
-  }
-    return "ERROR " + std::to_string(err) + " : " + error_message +"\n";
+        error_message = "INTERNAL_ERROR";
+        break;
+    case HTTP_VERSION_NOT_SUPPORTED:
+        error_message = "HTTP_VERSION_NOT_SUPPORTED";
+        break;
+    case NIQUE_TA_MERE:
+        error_message = "NIQUE_TA_MERE";
+        break;
+    default:
+        error_message = "A + DANS LE BUS";
+    }
+    return "ERROR " + std::to_string(err) + " : " + error_message + "\n";
 }
 
 int Response::forge_response()
@@ -194,7 +210,7 @@ int Response::forge_response()
         else
         {
             std::string content;
-            file >> content;
+            //file >> content;
 
             file.seekg(0, std::ios::end);
             content.reserve(file.tellg());
@@ -202,7 +218,7 @@ int Response::forge_response()
 
             content.assign((std::istreambuf_iterator<char>(file)),
                 std::istreambuf_iterator<char>());
-            response_ = content;
+            R_->response_ = content;
         }
         delete definedparams;
         break;
@@ -210,6 +226,7 @@ int Response::forge_response()
     default:
         R_->response_ = forge_error_response(NIQUE_TA_MERE); //or INTERNAL_ERROR for less fun
     }
+    return 0;
 }
 
 int ResponseBuilder::send_reponse()

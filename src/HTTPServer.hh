@@ -24,7 +24,8 @@ class HTTPServer {
    * server instead of throwing exception.
    */
   
-  int start();
+  int init(int& sock);
+  int start(int sock);
 
   /**
    * Stop listening on bound ports. (Stop accepting new work).

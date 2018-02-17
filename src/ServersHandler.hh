@@ -8,11 +8,13 @@ class ServersHandler
 {
  public:
     ServersHandler(std::vector<HTTPServerOptions> options);
-    std::vector<HTTPServer*> get_servers();
+    ~ServersHandler();
+    std::vector<HTTPServer> get_servers();
 
 
  private:
-    std::vector<HTTPServer*> servers_;
+    std::vector<HTTPServer> servers_;
+    std::vector<std::thread> th_servers_;
 };
 
 void SetSignals();

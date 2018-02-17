@@ -2,6 +2,11 @@
 #include <string>
 #include <HTTPServerOptions.hh>
 
- HTTPServerOptions::HTTPServerOptions(int listen_port, int threads, std::string ip)
- : listen_port_(listen_port), threads_(threads), ip_(ip)
- {}
+HTTPServerOptions::HTTPServerOptions(ServerConfig& server_tab)
+    : server_tab_(server_tab)
+{}
+
+ServerConfig& HTTPServerOptions::get_server_tab()
+{
+    return server_tab_;
+}
