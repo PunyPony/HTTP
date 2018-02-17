@@ -20,7 +20,7 @@ ResponseBuilder::ResponseBuilder(int client_sock, std::string request)
 
 int ResponseBuilder::analyse_request()
 {
-    //req.get_request_type();
+    req.get_request_type();
     req.parse_request(request_);
 }
 
@@ -121,20 +121,26 @@ int Request::parse_request(std::string request)
   [ message-body ]
   */
   std::string delimiter = "\r\n";
-
-  if (parse_request_line(get_token(request, delimiter)));
-    return -1;
-  std::cout << "request_line" << std::endl;
+  std::cout << "Start : request is " << request << std::endl;
+  if (parse_request_line(get_token(request, delimiter)))
+  {
+    std::cout << "request line failed " << get_token(request, delimiter) << std::endl;
+    //return -1;
+  }
+  
+  
   std::string rest = get_request_rest(request, delimiter);
+  std::cout << "Rest is :" << rest << std::endl;
   while (!rest.empty())
   {
-    std::cout << "yolo" << std::endl;
     std::string next_token = get_token(rest, delimiter);
-    if (parse_header(next_token) == -1)
+    std::cout << "Next token" << next_token << std::endl;
+    if (!parse_header(next_token) == -1)
       return -1;
     rest = get_request_rest(request, delimiter);
+    std::cout << "Rest is :" << rest << std::endl;
   }
-  if (parse_body(get_token(request, delimiter)))
+  if (!parse_body(get_token(request, delimiter)))
     std::cout << "Body found" << std::endl;
 
   return 0;
