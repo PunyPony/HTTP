@@ -103,10 +103,9 @@ int HTTPServer::start(int sock)
         int waitres = epoll_wait(epollfd, events, 10, -1); //nb of events?
         for (int i = 0; i < waitres; i++)
         {
-            std::cout << waitres << std::endl;
-            client_sock = events[i].data.fd;
-            std::string request = get_request(client_sock);
-            DefaultThreadPool::submitJob([client_sock, request]() //fixme: sock where event occured
+            int requested_sock = events[i].data.fd;
+            std::string request = get_request(requested_sock);
+            DefaultThreadPool::submitJob([requested_sock, request, this]() //fixme: sock where event occured
             {
                 //start of analyse
                 ResponseBuilder builder(requested_sock, request, this->options_);
