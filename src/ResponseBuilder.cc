@@ -22,7 +22,7 @@ ResponseBuilder::ResponseBuilder(int client_sock, std::string request)
 int ResponseBuilder::analyse_request()
 {
     req.get_request_type();
-    req.parse_request(request_);
+    //req.parse_request(request_);
     return 0;
 }
 
@@ -120,8 +120,8 @@ int Request::parse_request(std::string request)
     */
     std::string delimiter = "\r\n";
 
-    if (parse_request_line(get_token(request, delimiter)));
-    return -1;
+    if (parse_request_line(get_token(request, delimiter)))
+        return -1;
 
     std::string rest = get_request_rest(request, delimiter);
     while (!rest.empty())
@@ -148,7 +148,7 @@ int Request::get_request_type()
 {
     //fixme: mutiple request types possible?
     R_->params_ = new struct fileparams;
-    ((struct fileparams*)R_->params_)->path = "../testfile";
+    ((struct fileparams*)R_->params_)->path = "/home/nicolas/projects/MyHTTPD/testfile";
     R_->type_ = RQFILE;
     return 0;
 }
@@ -161,13 +161,26 @@ std::string Response::forge_error_response(error_type err)
     case ACCESS_DENIED:
         error_message = "ACCESS_DENIED";
         break;
+    case FORBIDDEN:
+        error_message = "FORBIDDEN";
+        break;
     case FILE_NOT_FOUND:
         error_message = "FILE_NOT_FOUND";
+        break;
+    case METHOD_NOT_ALLOWED:
+        error_message = "METHOD_NOT_ALLOWED";
         break;
     case INTERNAL_ERROR:
         error_message = "INTERNAL_ERROR";
         break;
-
+    case HTTP_VERSION_NOT_SUPPORTED:
+        error_message = "HTTP_VERSION_NOT_SUPPORTED";
+        break;
+    case NIQUE_TA_MERE:
+        error_message = "NIQUE_TA_MERE";
+        break;
+    default:
+        error_message = "A + DANS LE BUS";
     }
     return "ERROR " + std::to_string(err) + " : " + error_message + "\n";
 }
@@ -187,7 +200,7 @@ int Response::forge_response()
         else
         {
             std::string content;
-            file >> content;
+            //file >> content;
 
             file.seekg(0, std::ios::end);
             content.reserve(file.tellg());
@@ -195,7 +208,7 @@ int Response::forge_response()
 
             content.assign((std::istreambuf_iterator<char>(file)),
                 std::istreambuf_iterator<char>());
-            response_ = content;
+            R_->response_ = content;
         }
         delete definedparams;
         break;

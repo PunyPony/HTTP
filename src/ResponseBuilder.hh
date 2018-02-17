@@ -16,8 +16,11 @@ enum request_type
 enum error_type
 {
     ACCESS_DENIED = 401,
+    FORBIDDEN = 403,
     FILE_NOT_FOUND = 404,
+    METHOD_NOT_ALLOWED = 405,
     INTERNAL_ERROR = 500,
+    HTTP_VERSION_NOT_SUPPORTED = 505,
     NIQUE_TA_MERE = 6969
 };
 struct fileparams
@@ -49,7 +52,6 @@ public:
     Response(ResponseBuilder* R) { R_ = R; }
     std::string forge_error_response(error_type err);
     int forge_response();
-    std::string response_;
 private:
     ResponseBuilder * R_;
 };
