@@ -79,8 +79,24 @@ int Request::parse_fields(std::string message_header)
     return 0;
 }
 
-int Request::parse_request_line(std::string request)
+int Request::parse_request_line(std::string request_line)
 {
+    std::string delimiter = " ";
+    std::string method = get_token(request_line, delimiter);
+    std::cout << "method " << method <<std::endl;
+    R_->type_ = RQFILE;
+    
+    return 0;
+    get_request_rest(request_line, delimiter);
+    std::string request_uri = get_token(request_line, delimiter);
+    std::cout << "request_uri " << request_uri <<std::endl;
+    R_->params_ = new struct fileparams;
+    ((struct fileparams*)R_->params_)->path = request_uri;
+
+    get_request_rest(request_line, delimiter);
+    std::string http_version = get_token(request_line, delimiter);
+    std::cout << "http_version " << http_version <<std::endl;
+    
     return 0;
 }
 
@@ -128,12 +144,13 @@ int Request::parse_request(std::string request)
   if (parse_request_line(get_token(request, delimiter)))
   {
     std::cout << "request line failed " << get_token(request, delimiter) << std::endl;
-    //return -1;
+    return -1;
   }
   
   
   std::string rest = get_request_rest(request, delimiter);
   std::cout << "Rest is :" << rest << std::endl;
+  /*
   while (!rest.empty())
   {
     std::string next_token = get_token(rest, delimiter);
@@ -145,6 +162,7 @@ int Request::parse_request(std::string request)
   }
   if (!parse_body(get_token(request, delimiter)))
     std::cout << "Body found" << std::endl;
+*/
 
   return 0;
 }

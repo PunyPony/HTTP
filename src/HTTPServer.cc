@@ -42,7 +42,7 @@ private:
 
 //END of code to move
 
-int HTTPServer::init(int& sock) //fix les accès de merde
+int HTTPServer::init(int& sock) //fix les accï¿½s de merde
 {
     sock = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
     if (sock == -1)
@@ -98,6 +98,7 @@ int HTTPServer::start(int sock)
         int waitres = epoll_wait(epollfd, events, 10, 0); //nb of events?
         for (int i = 0; i < waitres; i++)
         {
+            std::cout << waitres << std::endl;
             client_sock = events[i].data.fd;
             std::string request = get_request(client_sock);
             DefaultThreadPool::submitJob([client_sock, request]() //fixme: sock where event occured
@@ -120,10 +121,6 @@ int HTTPServer::start(int sock)
 
 void HTTPServer::stopListening()
 {
-    while (1)
-    {
-        std::cout << "CACA" << std::endl;
-    }
 }
 
 void HTTPServer::stop()
