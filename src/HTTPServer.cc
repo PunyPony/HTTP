@@ -42,7 +42,7 @@ private:
 
 //END of code to move
 
-int HTTPServer::init(int& sock)
+int HTTPServer::init(int& sock) //fix les accès de merde
 {
     sock = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
     if (sock == -1)
@@ -52,10 +52,10 @@ int HTTPServer::init(int& sock)
     }
     struct sockaddr_in addrin;
     addrin.sin_family = AF_INET;
-    addrin.sin_port = htons(options_.listen_port_);
+    addrin.sin_port = htons(atoi(options_.get_server_tab().get_port().getparam().c_str()));
 
     //convert string ip to good form
-    if (!inet_aton(options_.ip_.c_str(), &addrin.sin_addr))
+    if (!inet_aton(options_.get_server_tab().get_ip().getparam().c_str(), &addrin.sin_addr))
     {
         std::cout << "inet_aton fail" << std::endl;
         return -1;
