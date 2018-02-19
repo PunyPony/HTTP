@@ -104,6 +104,9 @@ int main(int argc, char* argv[])
         server_array[i].set_basic_auth_file(toml::get<toml::String>(
             server.at(i).at("basic_auth_file")));
     }
+    std::vector<std::vector<std::string>> a = toml::get<std::vector<std::vector<std::string>>>(server.at(nbserv - 1).at("error"));
+    std::string firstcode  = a[0][0];
+    std::cout << firstcode << std::endl;
 
     //Checking Parsing Errors
     for (int i = 0; i < nbserv; i++)
@@ -129,7 +132,8 @@ int main(int argc, char* argv[])
         return 2;
       }
     }
-    
+   
+     
     std::vector<HTTPServerOptions> servers_options;
     for (int i = 0; i < nbserv; i++)
     {
