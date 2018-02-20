@@ -82,7 +82,6 @@ protected:
     std::string request_;
     std::string response_;
     HTTPServerOptions& options_;
-    std::unordered_map<std::string, std::string> server_params_;
     std::unordered_map<std::string, std::string> headers_;
 private:
     Request req{ this };
