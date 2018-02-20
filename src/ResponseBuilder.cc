@@ -136,6 +136,10 @@ int Request::parse_request_line(std::string request_line)
         R_->parsing_error_ = HTTP_VERSION_NOT_SUPPORTED;
         return -1;
     }
+    else
+    {
+        R_->headers_["HTTP"] = http_version;
+    }
 
     R_->Version_ = http_version;
 
@@ -304,6 +308,20 @@ int Response::forge_response()
     {
         struct fileparams* definedparams = (struct fileparams*)R_->params_;
         std::string path = R_->options_.get_server_tab().get_root_dir().getparam() + definedparams->path;
+        struct stat st;
+        if (-1 == stat(path.c_str(), &st))
+        {
+            //fixme
+        }
+        else
+        {
+            if (S_ISDIR(st.st_mode))
+            {
+                if (path.back() != '/')
+                    path.append("/");
+                path.append("index.html");
+            }
+        }
         //fixme: check path bounds
         std::ifstream file(path);
         if (!file.good())
@@ -346,5 +364,10 @@ int ResponseBuilder::send_reponse()
     else
         if ((size_t)res != response_.size())
             error("write: wrong size written", 2);
+    if (headers_["HTTP"] == "HTTP/1.0")
+    {
+        close(client_sock_);
+        return 1;
+    }
     return 0;
 }

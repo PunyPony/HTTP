@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include "HTTPServerOptions.hh"
 
 //class Response;

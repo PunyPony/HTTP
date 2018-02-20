@@ -118,11 +118,10 @@ int HTTPServer::start(int sock)
                 ResponseBuilder builder(requested_sock, request, this->options_);
                 builder.analyse_request();
                 builder.generate_response();
-                if (builder.send_reponse() == 1)
+                if (builder.send_reponse() == 1) //connection closed (by client or version is HTTP/1.0)
                     if (-1 == epoll_ctl(epollfd, EPOLL_CTL_DEL, requested_sock, NULL)) {
                         //fixme: log error
                     }
-                //close(requested_sock); //fixme: should we close this //end of analyse
             }
             );
         }
