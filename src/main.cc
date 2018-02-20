@@ -103,10 +103,23 @@ int main(int argc, char* argv[])
       if (server.at(i).count("basic_auth_file"))
         server_array[i].set_basic_auth_file(toml::get<toml::String>(
             server.at(i).at("basic_auth_file")));
+
+      if (server.at(i).count("error")){
+        //std::cout << "yolo" << std::endl;
+        server_array[i].set_custom_error(toml::get<std::vector<std::vector<std::string>>>(server.at(i).at("error")));
+      }
     }
-    std::vector<std::vector<std::string>> a = toml::get<std::vector<std::vector<std::string>>>(server.at(nbserv - 1).at("error"));
-    std::string firstcode  = a[0][0];
-    std::cout << firstcode << std::endl;
+   /* 
+    std::cout << server_array[2].get_custom_error().getparam()[0][0]<< std::endl;
+    std::cout << server_array[2].get_custom_error().getparam()[0][1]<< std::endl;
+    std::cout << server_array[2].get_custom_error().getparam()[1][0]<< std::endl;
+    std::cout << server_array[2].get_custom_error().getparam()[1][1]<< std::endl;
+    */
+    
+    
+    //std::vector<std::vector<std::string>> a = toml::get<std::vector<std::vector<std::string>>>(server.at(nbserv - 1).at("error"));
+   // std::string firstcode  = a[0][0];
+   // std::cout << firstcode << std::endl;
 
     //Checking Parsing Errors
     for (int i = 0; i < nbserv; i++)
