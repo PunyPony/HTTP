@@ -85,20 +85,38 @@ int Request::parse_request_line(std::string request_line)
     std::string delimiter = " ";
     std::string method = get_token(request_line, delimiter);
     std::cout << "method " << method << std::endl;
-    R_->type_ = RQFILE;
 
     get_request_rest(request_line, delimiter);
     std::string request_uri = get_token(request_line, delimiter);
     std::cout << "request_uri " << request_uri << std::endl;
-    R_->params_ = new struct fileparams;
-    ((struct fileparams*)R_->params_)->path = request_uri;
 
     get_request_rest(request_line, delimiter);
     std::string http_version = get_token(request_line, delimiter);
     std::cout << "http_version " << http_version << std::endl;
 
     if (method.empty() || request_uri.empty() || http_version.empty())
+    {
+        R_->parsing_error_ = NIQUE_TA_MERE; //fixme
         return -1;
+    }
+
+    if (http_version != "HTTP/1.1" && http_version != "HTTP/1.0")
+    {
+        R_->parsing_error_ = HTTP_VERSION_NOT_SUPPORTED;
+        return -1;
+    }
+
+    if (method == "GET")
+    {
+        R_->type_ = GET;
+        R_->params_ = new struct fileparams;
+        ((struct fileparams*)R_->params_)->path = request_uri;
+    }
+    else if (method == "POST")
+    {
+        R_->type_ = POST;
+        //fixme
+    }
 
     return 0;
 }
@@ -180,7 +198,7 @@ int Request::get_request_type()
     //fixme: mutiple request types possible?
     R_->params_ = new struct fileparams;
     ((struct fileparams*)R_->params_)->path = "/home/nicolas/projects/MyHTTPD/testfile";
-    R_->type_ = RQFILE;
+    R_->type_ = GET;
     return 0;
 }
 
@@ -209,6 +227,9 @@ std::string Response::forge_error_response(error_type err)
         break;
     case NIQUE_TA_MERE:
         error_message = "NIQUE_TA_MERE";
+        break;
+    case NOT_IMPLEMENTED:
+        error_message = "NOT_IMPLEMENTED";
         break;
     default:
         error_message = "A + DANS LE BUS";
@@ -251,16 +272,23 @@ std::string formatGETanswer(std::string file) {
 
 int Response::forge_response()
 {
+    if (R_->parsing_error_ != NICEUH) {
+        R_->response_ = forge_error_response(R_->parsing_error_);
+        return 0;
+    }
     switch (R_->type_)
     {
-    case RQFILE:
+    case UNKNOWN:
+        R_->response_ = forge_error_response(METHOD_NOT_ALLOWED);
+        break;
+    case GET:
     {
         struct fileparams* definedparams = (struct fileparams*)R_->params_;
         std::string path = R_->options_.get_server_tab().get_root_dir().getparam() + definedparams->path;
         //fixme: check path bounds
         std::ifstream file(path);
         if (!file.good())
-            R_->response_ = forge_error_response(FILE_NOT_FOUND); //fixme: check error type(not found, cannot open...)
+            R_->response_ = forge_error_response(FILE_NOT_FOUND);
         else
         {
             std::string content;
@@ -277,6 +305,9 @@ int Response::forge_response()
         delete definedparams;
         break;
     }
+    case POST:
+        R_->response_ = forge_error_response(NOT_IMPLEMENTED);
+        break;
     default:
         R_->response_ = forge_error_response(NIQUE_TA_MERE); //or INTERNAL_ERROR for less fun
     }

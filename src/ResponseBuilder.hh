@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <unordered_map>
 #include "HTTPServerOptions.hh"
 
 //class Response;
@@ -11,16 +12,20 @@ class ResponseBuilder;
 
 enum request_type
 {
-    RQFILE
+    UNKNOWN,
+    GET,
+    POST
 };
 enum error_type
 {
+    NICEUH = 0,
     ACCESS_DENIED = 401,
     FORBIDDEN = 403,
     FILE_NOT_FOUND = 404,
     METHOD_NOT_ALLOWED = 405,
     INTERNAL_ERROR = 500,
     HTTP_VERSION_NOT_SUPPORTED = 505,
+    NOT_IMPLEMENTED = 6666,
     NIQUE_TA_MERE = 6969
 };
 struct fileparams
@@ -71,11 +76,14 @@ private:
 
 protected:
     int client_sock_;
-    enum request_type type_;
+    enum request_type type_ = UNKNOWN;
+    enum error_type parsing_error_ = NICEUH;
     void* params_;
     std::string request_;
     std::string response_;
     HTTPServerOptions& options_;
+    std::unordered_map<std::string, std::string> server_params_;
+    std::unordered_map<std::string, std::string> headers_;
 private:
     Request req{ this };
     Response res{ this };
