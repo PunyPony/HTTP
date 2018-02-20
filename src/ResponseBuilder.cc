@@ -22,7 +22,7 @@ ResponseBuilder::ResponseBuilder(int client_sock, std::string request, HTTPServe
 
 int ResponseBuilder::analyse_request()
 {
-    req.get_request_type();
+    //req.get_request_type();
     req.parse_request(request_);
     return 0;
 }
@@ -84,22 +84,22 @@ int Request::parse_request_line(std::string request_line)
 {
     std::string delimiter = " ";
     std::string method = get_token(request_line, delimiter);
-    std::cout << "method " << method <<std::endl;
+    std::cout << "method " << method << std::endl;
     R_->type_ = RQFILE;
-    
+
     get_request_rest(request_line, delimiter);
     std::string request_uri = get_token(request_line, delimiter);
-    std::cout << "request_uri " << request_uri <<std::endl;
+    std::cout << "request_uri " << request_uri << std::endl;
     R_->params_ = new struct fileparams;
     ((struct fileparams*)R_->params_)->path = request_uri;
 
     get_request_rest(request_line, delimiter);
     std::string http_version = get_token(request_line, delimiter);
-    std::cout << "http_version " << http_version <<std::endl;
+    std::cout << "http_version " << http_version << std::endl;
 
     if (method.empty() || request_uri.empty() || http_version.empty())
         return -1;
-    
+
     return 0;
 }
 
@@ -112,7 +112,7 @@ int Request::parse_header(std::string message_header)
 
 int Request::parse_general_header(std::string message_header)
 {
-  return 0;
+    return 0;
 }
 
 int Request::parse_request_header(std::string message_header)
@@ -136,38 +136,38 @@ int Request::parse_body(std::string request)
 
 int Request::parse_request(std::string request)
 {
-  /*
-  Request = Request-Line
-  * (( general-header | request-header | entity-header ) CRLF )
-  CRLF
-  [ message-body ]
-  */
-  std::string delimiter = "\r\n";
-  std::cout << "Start : request is " << request << std::endl;
-  if (parse_request_line(get_token(request, delimiter)))
-  {
-    std::cout << "request line failed " << get_token(request, delimiter) << std::endl;
-    return -1;
-  }
-  
-  
-  std::string rest = get_request_rest(request, delimiter);
-  std::cout << "Rest is :" << rest << std::endl;
-  /*
-  while (!rest.empty())
-  {
-    std::string next_token = get_token(rest, delimiter);
-    std::cout << "Next token" << next_token << std::endl;
-    if (!parse_header(next_token) == -1)
-      return -1;
-    rest = get_request_rest(request, delimiter);
-    std::cout << "Rest is :" << rest << std::endl;
-  }
-  if (!parse_body(get_token(request, delimiter)))
-    std::cout << "Body found" << std::endl;
-*/
+    /*
+    Request = Request-Line
+    * (( general-header | request-header | entity-header ) CRLF )
+    CRLF
+    [ message-body ]
+    */
+    std::string delimiter = "\r\n";
+    std::cout << "Start : request is " << request << std::endl;
+    if (parse_request_line(get_token(request, delimiter)))
+    {
+        std::cout << "request line failed " << get_token(request, delimiter) << std::endl;
+        return -1;
+    }
 
-  return 0;
+
+    std::string rest = get_request_rest(request, delimiter);
+    std::cout << "Rest is :" << rest << std::endl;
+    /*
+    while (!rest.empty())
+    {
+      std::string next_token = get_token(rest, delimiter);
+      std::cout << "Next token" << next_token << std::endl;
+      if (!parse_header(next_token) == -1)
+        return -1;
+      rest = get_request_rest(request, delimiter);
+      std::cout << "Rest is :" << rest << std::endl;
+    }
+    if (!parse_body(get_token(request, delimiter)))
+      std::cout << "Body found" << std::endl;
+  */
+
+    return 0;
 }
 
 void ResponseBuilder::error(std::string msg, int code)
@@ -256,7 +256,7 @@ int Response::forge_response()
     case RQFILE:
     {
         struct fileparams* definedparams = (struct fileparams*)R_->params_;
-        std::string path = /*R_->options_.get_server_tab().get_root_dir().getparam() + */definedparams->path;
+        std::string path = R_->options_.get_server_tab().get_root_dir().getparam() + definedparams->path;
         //fixme: check path bounds
         std::ifstream file(path);
         if (!file.good())
@@ -285,9 +285,14 @@ int Response::forge_response()
 
 int ResponseBuilder::send_reponse()
 {
-    int res = write(client_sock_, &response_[0], response_.size()); //should we write <end of file>?
+    int res = send(client_sock_, &response_[0], response_.size(), MSG_NOSIGNAL); //should we write <end of file>?
     if (res == -1)
+    {
         error("write", 2);
+        if (errno == EPIPE)
+            return 1; //connection closed
+        return -1; //unknown error
+    }
     else
         if ((size_t)res != response_.size())
             error("write: wrong size written", 2);

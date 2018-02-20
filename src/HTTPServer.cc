@@ -112,13 +112,16 @@ int HTTPServer::start(int sock)
                 }
                 continue;
             }
-            DefaultThreadPool::submitJob([requested_sock, request, this]() //fixme: sock where event occured
+            DefaultThreadPool::submitJob([requested_sock, request, this, epollfd]() //fixme: sock where event occured
             {
                 //start of analyse
                 ResponseBuilder builder(requested_sock, request, this->options_);
                 builder.analyse_request();
                 builder.generate_response();
-                builder.send_reponse();
+                if (builder.send_reponse() == 1)
+                    if (-1 == epoll_ctl(epollfd, EPOLL_CTL_DEL, requested_sock, NULL)) {
+                        //fixme: log error
+                    }
                 //close(requested_sock); //fixme: should we close this //end of analyse
             }
             );
