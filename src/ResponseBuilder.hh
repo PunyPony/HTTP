@@ -87,7 +87,7 @@ protected:
     enum request_type type_ = UNKNOWN;
     enum error_type parsing_error_ = NICEUH;
     void* params_;
-    std::string Version_;
+    std::string version_;
 
     std::string request_;
     std::string response_;

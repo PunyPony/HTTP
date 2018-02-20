@@ -12,8 +12,10 @@ namespace ugly
 void server_thread(HTTPServer&& server)
 {
     int sock;
-    server.init(sock);
-    server.start(sock);
+    if (!server.init(sock))
+        server.start(sock);
+    else
+        std::cout << "ERROR launching server" << std::endl; //fixme: proper error
 }
 
 ServersHandler::ServersHandler(std::vector<HTTPServerOptions> options)
@@ -24,7 +26,7 @@ ServersHandler::ServersHandler(std::vector<HTTPServerOptions> options)
     {
         servers_.emplace_back(it);
         //check return codes
-    }    
+    }
     for (auto it : servers_)
     {
         th_servers_.emplace_back(server_thread, it);
@@ -54,7 +56,7 @@ void signal_handler(int signal)
 void signal_ignored(int signal)
 {
     ugly::SignalStatus = signal;
-    std::cout << "Signal value : " << ugly::SignalStatus << '\n'; 
+    std::cout << "Signal value : " << ugly::SignalStatus << '\n';
 }
 
 

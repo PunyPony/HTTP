@@ -108,22 +108,18 @@ int Request::parse_request_line(std::string request_line)
     std::cout << "method = " << method << std::endl;
     method = clean_string(method);
     std::cout << "clean method = " << method << std::endl;
-    if (method == "GET")
-      R_->type_ = GET;
-    else if (method == "POST")
-      R_->type_ = POST;
 
     //fixme
 
     get_request_rest(request_line, delimiter);
     std::string request_uri = get_token(request_line, delimiter);
     std::cout << "request_uri = " << request_uri << std::endl;
-    R_->params_ = new struct fileparams;
-    ((struct fileparams*)R_->params_)->path = request_uri;
 
     get_request_rest(request_line, delimiter);
     std::string http_version = get_token(request_line, delimiter);
     std::cout << "http_version = " << http_version << std::endl;
+
+    R_->version_ = http_version;
 
     if (method.empty() || request_uri.empty() || http_version.empty())
     {
@@ -136,13 +132,18 @@ int Request::parse_request_line(std::string request_line)
         R_->parsing_error_ = HTTP_VERSION_NOT_SUPPORTED;
         return -1;
     }
-    else
+
+    if (method == "GET")
     {
-        R_->headers_["HTTP"] = http_version;
+        R_->type_ = GET;
+        R_->params_ = new struct fileparams;
+        ((struct fileparams*)R_->params_)->path = request_uri;
     }
-
-    R_->Version_ = http_version;
-
+    else if (method == "POST")
+    {
+        R_->type_ = POST;
+        //fixme
+    }
     return 0;
 }
 
@@ -364,7 +365,7 @@ int ResponseBuilder::send_reponse()
     else
         if ((size_t)res != response_.size())
             error("write: wrong size written", 2);
-    if (headers_["HTTP"] == "HTTP/1.0")
+    if (version_ == "HTTP/1.0")
     {
         close(client_sock_);
         return 1;
