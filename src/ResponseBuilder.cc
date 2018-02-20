@@ -88,26 +88,9 @@ int Request::parse_fields(std::string message_header)
 
 void Request::Set_field(std::string& field, std::string& value)
 {
-  if (field == "USER-AGENT")
-  {
-    R_->User_agent_ = value;
-    std::cout << "USER-AGENT set" << std::endl;
-    return;
-  }
-  if (field == "HOST")
-  {
-    R_->Host_ = value;
-    std::cout << "HOST set" << std::endl;
-    return;
-  }
-  if (field == "ACCEPT")
-  {
-    R_->Accept_ = value;
-    std::cout << "ACCEPT set" << std::endl;
-    return;
-  }
-  std::cout << "BUG !" << field << " : " << "value" << std::endl;
-  return;
+  std::pair<std::string, std::string>  el(field, value);
+  R_->fields_.insert(el);
+  std::cout << "Inserted : " << el.first << " : " << el.second << std::endl;
 }
 
 std::string Request::clean_string(std::string& s)
@@ -141,7 +124,6 @@ int Request::parse_request_line(std::string request_line)
     get_request_rest(request_line, delimiter);
     std::string http_version = get_token(request_line, delimiter);
     std::cout << "http_version = " << http_version << std::endl;
-    R_->Version_ = http_version;
 
     if (method.empty() || request_uri.empty() || http_version.empty())
     {
@@ -154,6 +136,8 @@ int Request::parse_request_line(std::string request_line)
         R_->parsing_error_ = HTTP_VERSION_NOT_SUPPORTED;
         return -1;
     }
+
+    R_->Version_ = http_version;
 
     return 0;
 }

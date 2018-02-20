@@ -84,15 +84,12 @@ protected:
     enum request_type type_ = UNKNOWN;
     enum error_type parsing_error_ = NICEUH;
     void* params_;
-    std::string User_agent_;
-    std::string Host_;
-    std::string Accept_;
     std::string Version_;
 
     std::string request_;
     std::string response_;
     HTTPServerOptions& options_;
-    std::unordered_map<std::string, std::string> headers_;
+    std::unordered_map<std::string, std::string> fields_;
 private:
     Request req{ this };
     Response res{ this };
