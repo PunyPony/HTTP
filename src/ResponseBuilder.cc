@@ -9,6 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fstream>
+#include <algorithm>
 
 #include "ResponseBuilder.hh"
 
@@ -74,25 +75,73 @@ int Request::parse_fields(std::string message_header)
 {
     std::string delimiter = ":";
     std::string field = get_token(message_header, delimiter);
+    std::cout << "field = "<< field << std::endl;
     if (field.empty())
         return -1;
     std::string value = get_request_rest(message_header, delimiter);
+    //std::string value = get_token(message_header, delimiter);
+    std::cout << "value = "<< value << std::endl;
+    field = clean_string(field);
+    Set_field(field, value);
     return 0;
+}
+
+void Request::Set_field(std::string& field, std::string& value)
+{
+  if (field == "USER-AGENT")
+  {
+    R_->User_agent_ = value;
+    std::cout << "USER-AGENT set" << std::endl;
+    return;
+  }
+  if (field == "HOST")
+  {
+    R_->Host_ = value;
+    std::cout << "HOST set" << std::endl;
+    return;
+  }
+  if (field == "ACCEPT")
+  {
+    R_->Accept_ = value;
+    std::cout << "ACCEPT set" << std::endl;
+    return;
+  }
+  std::cout << "BUG !" << field << " : " << "value" << std::endl;
+  return;
+}
+
+std::string Request::clean_string(std::string& s)
+{
+  remove_if(s.begin(), s.end(), isspace);
+  std::transform(s.begin(), s.end(), s.begin(),
+  [](unsigned char c){ return std::toupper(c);});
+  return s;
 }
 
 int Request::parse_request_line(std::string request_line)
 {
     std::string delimiter = " ";
     std::string method = get_token(request_line, delimiter);
-    std::cout << "method " << method << std::endl;
+    std::cout << "method = " << method << std::endl;
+    method = clean_string(method);
+    std::cout << "clean method = " << method << std::endl;
+    if (method == "GET")
+      R_->type_ = GET;
+    else if (method == "POST")
+      R_->type_ = POST;
+
+    //fixme
 
     get_request_rest(request_line, delimiter);
     std::string request_uri = get_token(request_line, delimiter);
-    std::cout << "request_uri " << request_uri << std::endl;
+    std::cout << "request_uri = " << request_uri << std::endl;
+    R_->params_ = new struct fileparams;
+    ((struct fileparams*)R_->params_)->path = request_uri;
 
     get_request_rest(request_line, delimiter);
     std::string http_version = get_token(request_line, delimiter);
-    std::cout << "http_version " << http_version << std::endl;
+    std::cout << "http_version = " << http_version << std::endl;
+    R_->Version_ = http_version;
 
     if (method.empty() || request_uri.empty() || http_version.empty())
     {
@@ -104,18 +153,6 @@ int Request::parse_request_line(std::string request_line)
     {
         R_->parsing_error_ = HTTP_VERSION_NOT_SUPPORTED;
         return -1;
-    }
-
-    if (method == "GET")
-    {
-        R_->type_ = GET;
-        R_->params_ = new struct fileparams;
-        ((struct fileparams*)R_->params_)->path = request_uri;
-    }
-    else if (method == "POST")
-    {
-        R_->type_ = POST;
-        //fixme
     }
 
     return 0;
@@ -161,7 +198,7 @@ int Request::parse_request(std::string request)
     [ message-body ]
     */
     std::string delimiter = "\r\n";
-    std::cout << "Start : request is " << request << std::endl;
+    std::cout << "Request = " << request << std::endl;
     if (parse_request_line(get_token(request, delimiter)))
     {
         std::cout << "request line failed " << get_token(request, delimiter) << std::endl;
@@ -170,20 +207,18 @@ int Request::parse_request(std::string request)
 
 
     std::string rest = get_request_rest(request, delimiter);
-    std::cout << "Rest is :" << rest << std::endl;
-    /*
+    std::cout << "Rest = " << rest << std::endl;
     while (!rest.empty())
     {
       std::string next_token = get_token(rest, delimiter);
-      std::cout << "Next token" << next_token << std::endl;
+      std::cout << "Next token = " << next_token << std::endl;
       if (!parse_header(next_token) == -1)
         return -1;
       rest = get_request_rest(request, delimiter);
-      std::cout << "Rest is :" << rest << std::endl;
+      std::cout << "Rest = " << rest << std::endl;
     }
     if (!parse_body(get_token(request, delimiter)))
-      std::cout << "Body found" << std::endl;
-  */
+      std::cout << "Body found = " << std::endl;
 
     return 0;
 }

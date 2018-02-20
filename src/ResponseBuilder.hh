@@ -16,6 +16,7 @@ enum request_type
     GET,
     POST
 };
+
 enum error_type
 {
     NICEUH = 0,
@@ -37,9 +38,13 @@ class Request
 {
 public:
     Request(ResponseBuilder* R) { R_ = R; }
-    std::string get_token(const std::string& request, const std::string& delimiter);
-    std::string get_request_rest(std::string& request, const std::string& delimiter);
+    std::string get_token(const std::string& request,
+    const std::string& delimiter);
+    std::string get_request_rest(std::string& request,
+    const std::string& delimiter);
     int parse_fields(std::string message_header);
+    std::string clean_string(std::string& s);
+    void Set_field(std::string& field, std::string& value);
     int parse_request_line(std::string request);
     int parse_general_header(std::string message_header);
     int parse_request_header(std::string message_header);
@@ -79,6 +84,11 @@ protected:
     enum request_type type_ = UNKNOWN;
     enum error_type parsing_error_ = NICEUH;
     void* params_;
+    std::string User_agent_;
+    std::string Host_;
+    std::string Accept_;
+    std::string Version_;
+
     std::string request_;
     std::string response_;
     HTTPServerOptions& options_;
