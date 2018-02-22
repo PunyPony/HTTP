@@ -13,6 +13,11 @@
 
 #include "ResponseBuilder.hh"
 
+// TO PLACE IN HEADER BUT FLEME
+std::string error_format(error_type err, std::string error_message);
+
+
+
 ResponseBuilder::ResponseBuilder(int client_sock, std::string request, HTTPServerOptions& options)
     :options_(options)
 {
@@ -232,22 +237,22 @@ std::string Response::forge_error_response(error_type err)
     switch (err)
     {
     case ACCESS_DENIED:
-        error_message = "ACCESS_DENIED";
+        error_message = "Unauthorized"; //401
         break;
     case FORBIDDEN:
-        error_message = "FORBIDDEN";
+        error_message = "Forbidden"; //403
         break;
     case FILE_NOT_FOUND:
-        error_message = "FILE_NOT_FOUND";
+        error_message = "Not Found"; //404
         break;
     case METHOD_NOT_ALLOWED:
-        error_message = "METHOD_NOT_ALLOWED";
+        error_message = "Method Not Allowed"; //405
         break;
     case INTERNAL_ERROR:
-        error_message = "INTERNAL_ERROR";
+        error_message = "Internal Server Error"; //500
         break;
     case HTTP_VERSION_NOT_SUPPORTED:
-        error_message = "HTTP_VERSION_NOT_SUPPORTED";
+        error_message = "HTTP Version not supported"; //505
         break;
     case NIQUE_TA_MERE:
         error_message = "NIQUE_TA_MERE";
@@ -258,7 +263,7 @@ std::string Response::forge_error_response(error_type err)
     default:
         error_message = "A + DANS LE BUS";
     }
-    return "ERROR " + std::to_string(err) + " : " + error_message + "\n";
+    return error_format(err, error_message);
 }
 
 std::string formatGETanswer(std::string file) {
@@ -292,6 +297,34 @@ std::string formatGETanswer(std::string file) {
     ans.append(file);
 
     return ans;
+}
+
+
+std::string error_format(error_type err, std::string error_message)
+{
+    time_t rawtime;
+    struct tm* timeinfo;
+    time(&rawtime);
+    timeinfo = gmtime(&rawtime);
+    char buffer[100];
+
+    //Protocol StatusCode ReasonPhrase
+    std::string ans;
+    std::string protocol("HTTP/1.1 "); //FIXME by real protocol variable
+    std::string statuscode(std::to_string(err)); //FIXME by real statuscode variable
+    std::string reasonphrase(error_message + "\n"); //FIXME by real reasonphrase variable
+    ans = protocol + statuscode + reasonphrase;
+
+    //Date
+    ans.append("Date: ");
+    strftime(buffer, 100, "%a, %d %b %G %T GMT", timeinfo);
+    std::string tmp(buffer);
+    ans.append(tmp);
+    ans.append("\n");
+
+    
+    return ans;
+
 }
 
 int Response::forge_response()

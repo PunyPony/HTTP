@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <map>
 #include <../toml/toml.hpp>
 #include <HTTPServerOptions.hh>
 #include <ThreadPool.hh>
@@ -106,7 +107,24 @@ int main(int argc, char* argv[])
 
       if (server.at(i).count("error")){
         //std::cout << "yolo" << std::endl;
-        server_array[i].set_custom_error(toml::get<std::vector<std::vector<std::string>>>(server.at(i).at("error")));
+       
+        std::vector<std::vector<std::string>> temp = toml::get<std::vector<std::vector<std::string>>>(server.at(i).at("error"));
+
+      // std::cout << "Size of temp : " <<temp.size() << std::endl;
+       
+       std::map<std::string, std::string> custom_errors;
+        for (int i = 0; i < temp.size(); ++i)
+        {
+          custom_errors[temp[i][0]] =  temp[i][1];
+        }
+ 
+        for (const auto& t : custom_errors)
+        {
+          std::cout << t.first << std::endl;
+          std::cout << t.second << std::endl;
+        } 
+
+//        server_array[i].set_custom_error(toml::get<std::vector<std::vector<std::string>>>(server.at(i).at("error")));
       }
     }
    /* 

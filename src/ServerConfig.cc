@@ -130,13 +130,24 @@ enum Param {
       basic_auth_file.setparam(basic_auth_file_);
     }
 
-
+/*
     Serverparameter<std::vector<std::vector<std::string>>>& ServerConfig::get_custom_error()
     {
       return custom_error;
     }
 
     void ServerConfig::set_custom_error(std::vector<std::vector<std::string>> custom_error_)
+    {
+      custom_error.setparam(custom_error_);
+    }
+*/
+
+    Serverparameter<std::map<std::string, std::string>>& ServerConfig::get_custom_error()
+    {
+      return custom_error;
+    }
+
+    void ServerConfig::set_custom_error(std::map<std::string, std::string> custom_error_)
     {
       custom_error.setparam(custom_error_);
     }

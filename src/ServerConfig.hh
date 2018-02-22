@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string>
 #include <vector>
+#include <map>
 #include "ConfigOptions.hh"
 
 
@@ -42,9 +43,13 @@ class ServerConfig{
 
     Serverparameter<std::string>& get_basic_auth_file();
     void set_basic_auth_file(std::string basic_auth_file);
-
+/*
     Serverparameter<std::vector<std::vector<std::string>>>& get_custom_error();
     void set_custom_error(std::vector<std::vector<std::string>> custom_error_);
+*/
+    Serverparameter<std::map<std::string, std::string>>& get_custom_error();
+    void set_custom_error(std::map<std::string, std::string> custom_error_);
+
 
   private:
     
@@ -60,5 +65,5 @@ class ServerConfig{
     Serverparameter<std::string> ssl_certificate_key;
     Serverparameter<bool> basic_auth;
     Serverparameter<std::string> basic_auth_file;
-    Serverparameter<std::vector<std::vector<std::string>>> custom_error;
+    Serverparameter<std::map<std::string, std::string>> custom_error;
 };
