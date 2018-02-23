@@ -117,12 +117,13 @@ int main(int argc, char* argv[])
         {
           custom_errors[temp[i][0]] =  temp[i][1];
         }
- 
+/* 
         for (const auto& t : custom_errors)
         {
           std::cout << t.first << std::endl;
           std::cout << t.second << std::endl;
         } 
+*/
 
 //        server_array[i].set_custom_error(toml::get<std::vector<std::vector<std::string>>>(server.at(i).at("error")));
       }

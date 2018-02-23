@@ -5,24 +5,28 @@
 class SynchronizedFile {
 public:
     SynchronizedFile (const std::string& path) 
+     :path_(path)
     {
         // Open file for writing...
-        log_file_.open(path);
     }
 
     int write (const std::string& dataToWrite) {
         // Ensure that only one thread can execute at a time
         std::lock_guard<std::mutex> lock(writerMutex_);
+        std::ofstream os;
+        os.open(path_);
+
         // Write to the file...
-        log_file_ << dataToWrite;
+        os << dataToWrite;
+        os.close();
+
     }
 
     ~SynchronizedFile()
     {
-        log_file_.close();
     } 
 
 private:
-    std::ofstream log_file_;
+    std::string path_;
     std::mutex writerMutex_;
 };

@@ -35,7 +35,8 @@ int ResponseBuilder::log()
     ss << type_;
     std::string type = ss.str();
     std::string log_line = "[" + serv_name + "]"+ " " + version_ + " " + type + " " + requested_ressource_;
-    log_file_->write(log_line);
+    //std::cout << "Log Line : " << log_line << std::endl;
+    //log_file_->write(log_line);
 }
 
 int ResponseBuilder::analyse_request()
