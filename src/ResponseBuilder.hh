@@ -59,6 +59,8 @@ public:
     int parse_body(std::string request);
     int parse_request(std::string request);
     int get_request_type();
+   // std::string error_format(error_type err, std::string error_message);
+
 private:
     ResponseBuilder * R_;
 };
@@ -68,6 +70,8 @@ class Response
 public:
     Response(ResponseBuilder* R) { R_ = R; }
     std::string forge_error_response(error_type err);
+    std::string error_format(error_type err, std::string error_message);
+
     int forge_response();
 private:
     ResponseBuilder * R_;
