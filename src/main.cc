@@ -175,7 +175,7 @@ int main(int argc, char* argv[])
     //if dry_run set to true, just check and return. Launch server otherwise.
     if (!dry_run)
     {
-      ServersHandler servers_handler(servers_options);
+      ServersHandler servers_handler(servers_options, log_file);
       return 0;
     }
     else

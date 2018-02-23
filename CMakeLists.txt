@@ -15,7 +15,6 @@ set(SRC
     src/ServersHandler.cc
     src/HTTPServerOptions.cc
     src/HTTPServer.cc
-    src/RequestHandler.cc
     src/ResponseBuilder.cc
     src/ServerConfig.cc
 )

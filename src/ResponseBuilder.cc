@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <sstream>
 #include <stdio.h>
@@ -25,6 +26,8 @@ ResponseBuilder::ResponseBuilder(int client_sock, std::string request, HTTPServe
     request_ = std::move(request);
     //sleep(1);
 }
+
+
 
 int ResponseBuilder::analyse_request()
 {

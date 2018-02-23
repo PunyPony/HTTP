@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "ServerConfig.hh"
+#include "SynchronizedFile.hh"
 /**
  * Configuration options for HTTPServer
  *
@@ -25,6 +26,7 @@ class HTTPServerOptions {
  private:
  // HTTPServerOptions();
   ServerConfig server_tab_;
+  
 
 
   /**

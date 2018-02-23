@@ -1,6 +1,3 @@
-//#include <fstream>
-//#include <vector>
-//#include <stdlib.h>
 #include <string>
 #include <iostream>
 #include <arpa/inet.h>
@@ -11,14 +8,15 @@
 #include <vector>
 #include <stdlib.h>
 #include <string>
-//#include <socket>
+#include <thread>
 
 #include <ResponseBuilder.hh>
 #include <HTTPServer.hh>
 #include <HTTPServerOptions.hh>
+#include <ThreadPool.hh>
 
-HTTPServer::HTTPServer(HTTPServerOptions options)
-    : options_(options)
+HTTPServer::HTTPServer(HTTPServerOptions options, std::string log_file_path)
+    : options_(options), log_file_(std::make_shared<SynchronizedFile>(log_file_path))
 {
     // Insert a filter to fail all the CONNECT request, if required
     // Add Content Compression filter (gzip), if needed. Should be
@@ -27,18 +25,6 @@ HTTPServer::HTTPServer(HTTPServerOptions options)
 
 HTTPServer::~HTTPServer()
 {}
-
-class HandlerCallbacks {
-public:
-    /* pourquoi pas
-    void threadStarted(ThreadPoolExecutor::ThreadHandle* h) override
-    {}
-    void threadStopped(ThreadPoolExecutor::ThreadHandle* h) override
-    {}
-    */
-private:
-};
-//START of code to move
 
 //END of code to move
 
@@ -105,6 +91,8 @@ int HTTPServer::start(int sock)
         {
             int requested_sock = events[i].data.fd;
             std::string request = get_request(requested_sock);
+            // write to log file
+            get_log_file()->write(request);
             if (!request.size())
             {
                 if (-1 == epoll_ctl(epollfd, EPOLL_CTL_DEL, requested_sock, NULL)) {
@@ -129,7 +117,16 @@ int HTTPServer::start(int sock)
 
     close(sock);
     return 0;
+}
 
+HTTPServerOptions& HTTPServer::get_options()
+{
+    return options_;
+}
+
+std::shared_ptr<SynchronizedFile>& HTTPServer::get_log_file()
+{
+    return log_file_;
 }
 
 void HTTPServer::stopListening()

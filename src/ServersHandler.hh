@@ -1,18 +1,20 @@
 #pragma once
 #include <vector>
 #include <csignal>
+#include <thread>
 #include <HTTPServer.hh>
 #include <HTTPServerOptions.hh>
 
 class ServersHandler
 {
  public:
-    ServersHandler(std::vector<HTTPServerOptions> options);
+    ServersHandler(std::vector<HTTPServerOptions> options, std::string log_file_path);
     ~ServersHandler();
     std::vector<HTTPServer> get_servers();
 
 
  private:
+    std::string log_file_path_;
     std::vector<HTTPServer> servers_;
     std::vector<std::thread> th_servers_;
 };

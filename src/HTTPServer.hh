@@ -1,6 +1,6 @@
 #pragma once
 #include <HTTPServerOptions.hh>
-#include <RequestHandler.hh>
+#include <memory>
 
 class HTTPServer {
  public:
@@ -8,7 +8,7 @@ class HTTPServer {
   /**
    * Create a new HTTPServer
    */
-  HTTPServer(HTTPServerOptions options);
+  HTTPServer(HTTPServerOptions options, std::string log_file_path_);
   ~HTTPServer();
   /**
    * Start HTTPServer.
@@ -49,8 +49,10 @@ class HTTPServer {
   void stop();
 
   int getListenSocket() const;
+  HTTPServerOptions& get_options();
+  std::shared_ptr<SynchronizedFile>& get_log_file();
 
  private:
   HTTPServerOptions options_;
-  RequestHandler request_handler_;
+  std::shared_ptr<SynchronizedFile> log_file_;
 };

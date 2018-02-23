@@ -76,6 +76,7 @@ protected:
     friend class Response;
 public:
     ResponseBuilder(int client_sock, std::string request, HTTPServerOptions& options);
+    
     int analyse_request();
     int generate_response();
     int send_reponse();
