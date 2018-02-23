@@ -91,8 +91,6 @@ int HTTPServer::start(int sock)
         {
             int requested_sock = events[i].data.fd;
             std::string request = get_request(requested_sock);
-            // write to log file
-            // get_log_file()->write(request);
             if (!request.size())
             {
                 if (-1 == epoll_ctl(epollfd, EPOLL_CTL_DEL, requested_sock, NULL)) {
@@ -105,6 +103,10 @@ int HTTPServer::start(int sock)
                 //start of analyse
                 ResponseBuilder builder(requested_sock, request, this->options_, get_log_file());
                 builder.analyse_request();
+                // write to log file
+                if (get_options().get_server_tab().get_log().getparam())
+                    builder.log();
+                // build response
                 builder.generate_response();
                 
                 if (builder.send_reponse() == 1) //connection closed (by client or version is HTTP/1.0)
