@@ -2,6 +2,7 @@
 #include <memory>
 #include <HTTPServerOptions.hh>
 #include <SynchronizedFile.hh>
+#include <Cache.hh>
 
 
 class HTTPServer {
@@ -57,4 +58,5 @@ class HTTPServer {
  private:
   HTTPServerOptions options_;
   std::shared_ptr<SynchronizedFile> log_file_;
+  //Cache cache_;
 };
