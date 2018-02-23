@@ -328,19 +328,15 @@ std::string Response::error_format(error_type err, std::string error_message)
 
     //Protocol StatusCode ReasonPhrase
     std::string ans;
-    std::string protocol("HTTP/1.1 "); //FIXME by real protocol variable
     std::string statuscode(std::to_string(err) + " "); //FIXME by real statuscode variable
     std::string reasonphrase(error_message + "\n"); //FIXME by real reasonphrase variable
-    ans = protocol + statuscode + reasonphrase;
+    ans = R_->version_ + " " + statuscode + reasonphrase;
 
     //Date
     ans.append("Date: ");
     strftime(buffer, 100, "%a, %d %b %G %T GMT", timeinfo);
     std::string tmp(buffer);
     ans.append(tmp);
-    ans.append("\n");
-
-    ans.append(R_->version_); 
     return ans;
 
 }
