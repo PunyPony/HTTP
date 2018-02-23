@@ -4,7 +4,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "HTTPServerOptions.hh"
+#include <memory>
+#include <SynchronizedFile.hh>
+#include <HTTPServerOptions.hh>
 
 //class Response;
 //class Request;
@@ -32,10 +34,11 @@ enum error_type
     NOT_IMPLEMENTED = 6666,
     NIQUE_TA_MERE = 6969
 };
+/*
 struct fileparams
 {
     std::string path;
-};
+};*/
 
 class Request
 {
@@ -75,11 +78,12 @@ protected:
     friend class Request;
     friend class Response;
 public:
-    ResponseBuilder(int client_sock, std::string request, HTTPServerOptions& options);
+    ResponseBuilder(int client_sock, std::string request, HTTPServerOptions& options, std::shared_ptr<SynchronizedFile>& log_file);
     
     int analyse_request();
     int generate_response();
     int send_reponse();
+    int log();
 private:
     void error(std::string msg, int code);
 
@@ -87,12 +91,16 @@ protected:
     int client_sock_;
     enum request_type type_ = UNKNOWN;
     enum error_type parsing_error_ = NICEUH;
-    void* params_;
+
+    //void* params_; 
+    std::string requested_ressource_;
+
     std::string version_;
 
     std::string request_;
     std::string response_;
     HTTPServerOptions& options_;
+    std::shared_ptr<SynchronizedFile> log_file_;
     std::unordered_map<std::string, std::string> fields_;
 private:
     Request req{ this };

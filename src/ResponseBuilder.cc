@@ -19,7 +19,7 @@ std::string error_format(error_type err, std::string error_message);
 
 
 
-ResponseBuilder::ResponseBuilder(int client_sock, std::string request, HTTPServerOptions& options)
+ResponseBuilder::ResponseBuilder(int client_sock, std::string request, HTTPServerOptions& options, std::shared_ptr<SynchronizedFile>& log_file)
     :options_(options)
 {
     client_sock_ = client_sock;
@@ -27,7 +27,16 @@ ResponseBuilder::ResponseBuilder(int client_sock, std::string request, HTTPServe
     //sleep(1);
 }
 
-
+int ResponseBuilder::log()
+{
+    std::string serv_name = options_.get_server_tab().get_server_name().getparam();
+    //"[NAME_SERV] VERSION_HTTP REQUEST_TYPE RESOURCE_REQUESTED"
+    std::stringstream ss;
+    ss << type_;
+    std::string type = ss.str();
+    std::string log_line = "[" + serv_name + "]"+ " " + version_ + " " + type + " " + requested_ressource_;
+    log_file_->write(log_line);
+}
 
 int ResponseBuilder::analyse_request()
 {
@@ -144,8 +153,11 @@ int Request::parse_request_line(std::string request_line)
     if (method == "GET")
     {
         R_->type_ = GET;
+        R_->requested_ressource_ = request_uri;
+        /*
         R_->params_ = new struct fileparams;
         ((struct fileparams*)R_->params_)->path = request_uri;
+        */
     }
     else if (method == "POST")
     {
@@ -228,9 +240,12 @@ void ResponseBuilder::error(std::string msg, int code)
 int Request::get_request_type()
 {
     //fixme: mutiple request types possible?
+    /*
     R_->params_ = new struct fileparams;
     ((struct fileparams*)R_->params_)->path = "/home/nicolas/projects/MyHTTPD/testfile";
+    */
     R_->type_ = GET;
+    R_->requested_ressource_ = "/home/nicolas/projects/MyHTTPD/testfile";
     return 0;
 }
 
@@ -343,8 +358,8 @@ int Response::forge_response()
         break;
     case GET:
     {
-        struct fileparams* definedparams = (struct fileparams*)R_->params_;
-        std::string path = R_->options_.get_server_tab().get_root_dir().getparam() + definedparams->path;
+        //struct fileparams* definedparams = (struct fileparams*)R_->params_;
+        std::string path = R_->options_.get_server_tab().get_root_dir().getparam() + R_->requested_ressource_; // definedparams->path;
         struct stat st;
         if (-1 == stat(path.c_str(), &st))
         {
@@ -376,7 +391,7 @@ int Response::forge_response()
                 std::istreambuf_iterator<char>());
             R_->response_ = formatGETanswer(content);
         }
-        delete definedparams;
+        //delete definedparams;
         break;
     }
     case POST:

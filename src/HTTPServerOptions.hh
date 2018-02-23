@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include "ServerConfig.hh"
-#include "SynchronizedFile.hh"
 /**
  * Configuration options for HTTPServer
  *

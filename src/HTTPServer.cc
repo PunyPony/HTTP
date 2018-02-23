@@ -92,7 +92,7 @@ int HTTPServer::start(int sock)
             int requested_sock = events[i].data.fd;
             std::string request = get_request(requested_sock);
             // write to log file
-            get_log_file()->write(request);
+            // get_log_file()->write(request);
             if (!request.size())
             {
                 if (-1 == epoll_ctl(epollfd, EPOLL_CTL_DEL, requested_sock, NULL)) {
@@ -103,9 +103,10 @@ int HTTPServer::start(int sock)
             DefaultThreadPool::submitJob([requested_sock, request, this, epollfd]() //fixme: sock where event occured
             {
                 //start of analyse
-                ResponseBuilder builder(requested_sock, request, this->options_);
+                ResponseBuilder builder(requested_sock, request, this->options_, get_log_file());
                 builder.analyse_request();
                 builder.generate_response();
+                
                 if (builder.send_reponse() == 1) //connection closed (by client or version is HTTP/1.0)
                     if (-1 == epoll_ctl(epollfd, EPOLL_CTL_DEL, requested_sock, NULL)) {
                         //fixme: log error

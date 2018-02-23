@@ -1,6 +1,8 @@
 #pragma once
-#include <HTTPServerOptions.hh>
 #include <memory>
+#include <HTTPServerOptions.hh>
+#include <SynchronizedFile.hh>
+
 
 class HTTPServer {
  public:
