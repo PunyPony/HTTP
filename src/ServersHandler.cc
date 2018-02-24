@@ -19,14 +19,14 @@ void server_thread(HTTPServer&& server)
         std::cout << "ERROR launching server" << std::endl; //fixme: proper error
 }
 
-ServersHandler::ServersHandler(std::vector<HTTPServerOptions> options, std::string log_file_path)
+ServersHandler::ServersHandler(std::unordered_map<int, std::unordered_map<std::string, HTTPServerOptions>> options, std::string log_file_path)
 : log_file_path_(log_file_path)
 {
     ugly::server_handler_ = this;
     SetSignals();
     for (auto it : options)
     {
-        servers_.emplace_back(it, log_file_path_);
+        servers_.emplace_back(it.second, log_file_path_);
         //check return codes
     }
     for (auto it : servers_)

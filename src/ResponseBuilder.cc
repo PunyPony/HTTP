@@ -16,8 +16,7 @@
 #include "Response.hh"
 #include "Request.hh"
 
-ResponseBuilder::ResponseBuilder(int client_sock, std::string request, HTTPServerOptions& options, std::shared_ptr<SynchronizedFile>& log_file)
-    :options_(options)
+ResponseBuilder::ResponseBuilder(int client_sock, std::string request, std::shared_ptr<SynchronizedFile>& log_file)
 {
     log_file_ = log_file;
     client_sock_ = client_sock;
@@ -29,7 +28,7 @@ ResponseBuilder::ResponseBuilder(int client_sock, std::string request, HTTPServe
 
 int ResponseBuilder::log()
 {
-    std::string serv_name = options_.get_server_tab().get_server_name().getparam();
+    std::string serv_name = options_->get_server_tab().get_server_name().getparam();
     //"[NAME_SERV] VERSION_HTTP REQUEST_TYPE RESOURCE_REQUESTED"
     std::string type;
     switch (type_)
@@ -51,6 +50,16 @@ int ResponseBuilder::log()
     return 0;
 }
 
+std::string ResponseBuilder::get_request_header(std::string name)
+{
+    return fields_[name];
+}
+
+void ResponseBuilder::set_options(HTTPServerOptions* options)
+{
+    options_ = options;
+}
+
 int ResponseBuilder::analyse_request()
 {
     req.parse_request(request_);
@@ -59,6 +68,8 @@ int ResponseBuilder::analyse_request()
 
 int ResponseBuilder::generate_response()
 {
+    if (options_ == nullptr)
+        parsing_error_ = FORBIDDEN; //fixme: move this check
     res.forge_response();
     return 0;
 }

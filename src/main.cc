@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <map>
+#include <unordered_map>
 #include <../toml/toml.hpp>
 #include "HTTPServerOptions.hh"
 #include "ThreadPool.hh"
@@ -168,11 +169,11 @@ int main(int argc, char* argv[])
     }
    
      
-    std::vector<HTTPServerOptions> servers_options;
+    std::unordered_map<int, std::unordered_map<std::string, HTTPServerOptions>> servers_options;
     for (int i = 0; i < nbserv; i++)
     {
       //HTTPServerOptions options(atoi(server_array[i].get_port().getparam().c_str()), 8, server_array[i].get_ip().getparam());
-      servers_options.emplace_back(server_array[i]);
+      servers_options[atoi(server_array[i].get_port().getparam().c_str())].emplace(server_array[i].get_server_name().getparam(), server_array[i]);
     }
 
     //if dry_run set to true, just check and return. Launch server otherwise.
