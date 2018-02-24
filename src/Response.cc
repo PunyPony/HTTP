@@ -126,7 +126,12 @@ std::string Response::error_format(error_type err, std::string error_message)
       {
         if (std::stoi(t.first) == err)
         {
-          std::ifstream file(t.second);
+          std::string path = R_->options_.get_server_tab().get_root_dir().getparam();
+          if (path.back() != '/')
+            path.append("/");
+          path.append(t.second);
+          std::ifstream file(path);
+
           if (file.good())
           {
             std::string custom;
