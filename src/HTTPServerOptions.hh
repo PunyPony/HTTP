@@ -3,7 +3,7 @@
 #include "ServerConfig.hh"
 /**
  * Configuration options for HTTPServer
- *
+ *log
  * XXX: Provide a helper that can convert thrift/json to this config
  *      directly. We keep this object type-safe.
  */

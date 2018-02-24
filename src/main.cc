@@ -6,11 +6,11 @@
 #include <netdb.h>
 #include <map>
 #include <../toml/toml.hpp>
-#include <HTTPServerOptions.hh>
-#include <ThreadPool.hh>
-#include <ServersHandler.hh>
-#include <ConfigOptions.hh>
-#include <ServerConfig.hh>
+#include "HTTPServerOptions.hh"
+#include "ThreadPool.hh"
+#include "ServersHandler.hh"
+#include "ConfigOptions.hh"
+#include "ServerConfig.hh"
 
 int main(int argc, char* argv[])
 {

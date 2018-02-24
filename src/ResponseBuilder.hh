@@ -5,13 +5,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <memory>
-#include <SynchronizedFile.hh>
-#include <HTTPServerOptions.hh>
-
-//class Response;
-//class Request;
-
-std::string get_request(int client_sock);
+#include "SynchronizedFile.hh"
+#include "HTTPServerOptions.hh"
 
 class ResponseBuilder;
 
@@ -34,76 +29,31 @@ enum error_type
     NOT_IMPLEMENTED = 6666,
     NIQUE_TA_MERE = 6969
 };
-/*
-struct fileparams
-{
-    std::string path;
-};*/
 
-class Request
-{
-public:
-    Request(ResponseBuilder* R) { R_ = R; }
-    std::string get_token(const std::string& request,
-    const std::string& delimiter);
-    std::string get_request_rest(std::string& request,
-    const std::string& delimiter);
-    int parse_fields(std::string message_header);
-    std::string clean_string(std::string& s);
-    void Set_field(std::string& field, std::string& value);
-    int parse_request_line(std::string request);
-    int parse_header(std::string message_header);
-    int parse_body(std::string request);
-    int parse_request(std::string request);
-    int get_request_type();
-   // std::string error_format(error_type err, std::string error_message);
-
-private:
-    ResponseBuilder * R_;
-};
-
-class Response
-{
-public:
-    Response(ResponseBuilder* R) { R_ = R; }
-    std::string forge_error_response(error_type err);
-    std::string error_format(error_type err, std::string error_message);
-
-    int forge_response();
-private:
-    ResponseBuilder * R_;
-};
+std::string get_request(int client_sock);
 
 class ResponseBuilder {
-protected:
-    friend class Request;
-    friend class Response;
 public:
     ResponseBuilder(int client_sock, std::string request, HTTPServerOptions& options, std::shared_ptr<SynchronizedFile>& log_file);
-    
     int analyse_request();
     int generate_response();
     int send_reponse();
     int log();
-private:
-    void error(std::string msg, int code);
-
 protected:
+    friend class Request;
+    friend class Response;
     int client_sock_;
     enum request_type type_ = UNKNOWN;
     enum error_type parsing_error_ = NICEUH;
-
-    //void* params_; 
     std::string requested_ressource_;
-
     std::string version_;
-
     std::string request_;
     std::string response_;
     HTTPServerOptions& options_;
     std::shared_ptr<SynchronizedFile> log_file_;
     std::unordered_map<std::string, std::string> fields_;
 private:
+    void error(std::string msg, int code);
     Request req{ this };
     Response res{ this };
 };
