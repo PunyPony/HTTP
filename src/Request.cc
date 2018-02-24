@@ -14,6 +14,7 @@
 
 #include "ResponseBuilder.hh"
 #include "Request.hh"
+#include "Response.hh"
 
 Request::Request(ResponseBuilder* R) 
 { 
