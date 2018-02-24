@@ -324,8 +324,8 @@ std::string Response::error_format(error_type err, std::string error_message)
 
     //Protocol StatusCode ReasonPhrase
     std::string ans;
-    std::string statuscode(std::to_string(err) + " "); //FIXME by real statuscode variable
-    std::string reasonphrase(error_message + "\n"); //FIXME by real reasonphrase variable
+    std::string statuscode(std::to_string(err) + " "); 
+    std::string reasonphrase(error_message + "\n"); 
     ans = R_->version_ + " " + statuscode + reasonphrase;
 
     //Date
@@ -333,6 +333,36 @@ std::string Response::error_format(error_type err, std::string error_message)
     strftime(buffer, 100, "%a, %d %b %G %T GMT", timeinfo);
     std::string tmp(buffer);
     ans.append(tmp);
+    ans.append("\n\n");
+
+    //Check if custom error page exist and return them
+    if (R_->options_.get_server_tab().get_custom_error().get())
+    {
+      std::map<std::string, std::string> test = R_->options_.get_server_tab().get_custom_error().getparam();
+      for (const auto& t : test)
+      {
+        if (std::stoi(t.first) == err)
+        {
+          std::ifstream file(t.second);
+          if (file.good())
+          {
+            std::string custom;
+            //file >> content;
+
+            file.seekg(0, std::ios::end);
+            custom.reserve(file.tellg());
+            file.seekg(0, std::ios::beg);
+
+            custom.assign((std::istreambuf_iterator<char>(file)),
+                std::istreambuf_iterator<char>());
+            ans.append(custom);
+          }
+
+        }
+      }
+    }
+
+
     return ans;
 
 }

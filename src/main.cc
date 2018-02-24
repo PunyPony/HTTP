@@ -105,7 +105,8 @@ int main(int argc, char* argv[])
         server_array[i].set_basic_auth_file(toml::get<toml::String>(
             server.at(i).at("basic_auth_file")));
 
-      if (server.at(i).count("error")){
+      if (server.at(i).count("error"))
+      {
         //std::cout << "yolo" << std::endl;
        
         std::vector<std::vector<std::string>> temp = toml::get<std::vector<std::vector<std::string>>>(server.at(i).at("error"));
@@ -125,8 +126,9 @@ int main(int argc, char* argv[])
         } 
 */
 
-//        server_array[i].set_custom_error(toml::get<std::vector<std::vector<std::string>>>(server.at(i).at("error")));
-      }
+     //   server_array[i].set_custom_error(toml::get<std::vector<std::vector<std::string>>>(server.at(i).at("error")));
+      server_array[i].set_custom_error(custom_errors);
+     }
     }
    /* 
     std::cout << server_array[2].get_custom_error().getparam()[0][0]<< std::endl;
