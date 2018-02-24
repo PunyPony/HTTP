@@ -7,6 +7,8 @@
 #include <memory>
 #include "SynchronizedFile.hh"
 #include "HTTPServerOptions.hh"
+#include "Request.hh"
+#include "Response.hh"
 
 class ResponseBuilder;
 
@@ -54,6 +56,6 @@ protected:
     std::unordered_map<std::string, std::string> fields_;
 private:
     void error(std::string msg, int code);
-    Request req{ this };
-    Response res{ this };
+    Request req;
+    Response res;
 };

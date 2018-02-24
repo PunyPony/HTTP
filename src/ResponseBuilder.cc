@@ -22,6 +22,8 @@ ResponseBuilder::ResponseBuilder(int client_sock, std::string request, HTTPServe
     log_file_ = log_file;
     client_sock_ = client_sock;
     request_ = std::move(request);
+    res = this;
+    req = this;
     //sleep(1);
 }
 

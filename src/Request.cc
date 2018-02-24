@@ -40,6 +40,29 @@ int Request::parse_fields(std::string message_header)
     std::string value = get_request_rest(message_header, delimiter);
     std::cout << "value = "<< value << std::endl;
     field = clean_string(field);
+
+    std::string::iterator first_not_space;
+    std::string::iterator last_not_space;
+    for (auto it=value.begin(); it != value.end(); it++)
+    {
+        if (*it != " ")
+        {
+            first_not_space = it;
+            break;
+        }
+    }
+    for (auto rit=value.rbegin(); rit != value.rend(); rit++)
+    {
+        if (*it != " ")
+        {
+            last_not_space = it;
+            break;
+        }
+    }
+
+    remove_if(value.begin(), first_not_space, isspace);
+    remove_if(last_not_space, value.end(), isspace);
+
     Set_field(field, value);
     return 0;
 }
