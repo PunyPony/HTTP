@@ -45,7 +45,7 @@ int ResponseBuilder::log()
             type = "UNKNOW";
             break;
     }
-    
+
     std::string log_line = "[" + serv_name + "]"+ " " + version_ + " " + type + " " + requested_ressource_ + "\n";
     std::cout << "Log Line : " << log_line << std::endl;
     log_file_->write(log_line);
@@ -54,7 +54,6 @@ int ResponseBuilder::log()
 
 int ResponseBuilder::analyse_request()
 {
-    //req.get_request_type();
     req.parse_request(request_);
     return 0;
 }
@@ -110,7 +109,6 @@ int Request::parse_fields(std::string message_header)
     if (field.empty())
         return -1;
     std::string value = get_request_rest(message_header, delimiter);
-    //std::string value = get_token(message_header, delimiter);
     std::cout << "value = "<< value << std::endl;
     field = clean_string(field);
     Set_field(field, value);
@@ -233,17 +231,16 @@ void ResponseBuilder::error(std::string msg, int code)
     std::cerr << msg << " : " << code << std::endl;
 }
 
+/*
 int Request::get_request_type()
 {
     //fixme: mutiple request types possible?
-    /*
     R_->params_ = new struct fileparams;
     ((struct fileparams*)R_->params_)->path = "/home/nicolas/projects/MyHTTPD/testfile";
-    */
     R_->type_ = GET;
     R_->requested_ressource_ = "/home/nicolas/projects/MyHTTPD/testfile";
     return 0;
-}
+}*/
 
 std::string Response::forge_error_response(error_type err)
 {
