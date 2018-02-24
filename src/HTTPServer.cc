@@ -73,8 +73,9 @@ int HTTPServer::start(int sock)
                 std::cout << "New client" << std::endl;
                 struct epoll_event tmpevents {
                     EPOLLIN,
-                    { .fd = client_sock }
+                    { 0 }
                 };
+                tmpevents.data.fd = client_sock;
                 if (-1 == epoll_ctl(epollfd, EPOLL_CTL_ADD, client_sock, &tmpevents))
                 {
                     std::cout << "epoll_ctl error" << std::endl;
@@ -83,7 +84,7 @@ int HTTPServer::start(int sock)
             }
         }
     });
-    struct epoll_event events[10]{ 0 };
+    struct epoll_event events[10]{ 0, {0} };
     for (;;)
     {
         int waitres = epoll_wait(epollfd, events, 10, -1); //nb of events?
@@ -108,7 +109,7 @@ int HTTPServer::start(int sock)
                     builder.log();
                 // build response
                 builder.generate_response();
-                
+
                 if (builder.send_reponse() == 1) //connection closed (by client or version is HTTP/1.0)
                     if (-1 == epoll_ctl(epollfd, EPOLL_CTL_DEL, requested_sock, NULL)) {
                         //fixme: log error
