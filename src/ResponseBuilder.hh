@@ -52,9 +52,6 @@ public:
     std::string clean_string(std::string& s);
     void Set_field(std::string& field, std::string& value);
     int parse_request_line(std::string request);
-    int parse_general_header(std::string message_header);
-    int parse_request_header(std::string message_header);
-    int parse_entity_header(std::string message_header);
     int parse_header(std::string message_header);
     int parse_body(std::string request);
     int parse_request(std::string request);

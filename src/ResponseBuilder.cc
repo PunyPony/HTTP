@@ -22,6 +22,7 @@ std::string error_format(error_type err, std::string error_message);
 ResponseBuilder::ResponseBuilder(int client_sock, std::string request, HTTPServerOptions& options, std::shared_ptr<SynchronizedFile>& log_file)
     :options_(options)
 {
+    log_file_ = log_file;
     client_sock_ = client_sock;
     request_ = std::move(request);
     //sleep(1);
@@ -31,12 +32,24 @@ int ResponseBuilder::log()
 {
     std::string serv_name = options_.get_server_tab().get_server_name().getparam();
     //"[NAME_SERV] VERSION_HTTP REQUEST_TYPE RESOURCE_REQUESTED"
-    std::stringstream ss;
-    ss << type_;
-    std::string type = ss.str();
-    std::string log_line = "[" + serv_name + "]"+ " " + version_ + " " + type + " " + requested_ressource_;
-    //std::cout << "Log Line : " << log_line << std::endl;
-    //log_file_->write(log_line);
+    std::string type;
+    switch (type_)
+    {
+        case 1:
+            type = "GET";
+            break;
+        case 2:
+            type = "POST";
+            break;
+        default:
+            type = "UNKNOW";
+            break;
+    }
+    
+    std::string log_line = "[" + serv_name + "]"+ " " + version_ + " " + type + " " + requested_ressource_ + "\n";
+    std::cout << "Log Line : " << log_line << std::endl;
+    log_file_->write(log_line);
+    return 0;
 }
 
 int ResponseBuilder::analyse_request()
@@ -175,27 +188,9 @@ int Request::parse_header(std::string message_header)
     return 0;
 }
 
-int Request::parse_general_header(std::string message_header)
+int Request::parse_body(std::string body)
 {
-    return 0;
-}
-
-int Request::parse_request_header(std::string message_header)
-{
-    if (parse_fields(message_header))
-        return -1;
-    return 0;
-}
-
-int Request::parse_entity_header(std::string message_header)
-{
-    if (parse_fields(message_header))
-        return -1;
-    return 0;
-}
-
-int Request::parse_body(std::string request)
-{
+    body = body;
     return 0;
 }
 
@@ -222,7 +217,7 @@ int Request::parse_request(std::string request)
     {
       std::string next_token = get_token(rest, delimiter);
       std::cout << "Next token = " << next_token << std::endl;
-      if (!parse_header(next_token) == -1)
+      if (!parse_header(next_token))
         return -1;
       rest = get_request_rest(request, delimiter);
       std::cout << "Rest = " << rest << std::endl;
@@ -235,7 +230,7 @@ int Request::parse_request(std::string request)
 
 void ResponseBuilder::error(std::string msg, int code)
 {
-    std::cerr << msg << std::endl;
+    std::cerr << msg << " : " << code << std::endl;
 }
 
 int Request::get_request_type()
