@@ -3,9 +3,9 @@
 cmake_minimum_required(VERSION 3.5)
 
 set(CMAKE_CXX_COMPILER "g++")
-set(CMAKE_C_FLAGS "-Wall -Wextra -Werror -pedantic -std=c++17 -pthread")
-set(CMAKE_C_FLAGS_DEBUG "-g -O0")
-set(CMAKE_C_FLAGS_RELEASE "-02")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -pedantic -std=c++17 -pthread")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
+set(CMAKE_CXX_FLAGS_RELEASE "-02")
 set(CMAKE_BUILD_TYPE Debug)
 
 include_directories(src/)

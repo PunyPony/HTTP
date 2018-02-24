@@ -20,6 +20,7 @@ public:
         os << dataToWrite;
         os.close();
 
+        return 0; //FIXME
     }
 
     ~SynchronizedFile()

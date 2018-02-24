@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
       // std::cout << "Size of temp : " <<temp.size() << std::endl;
        
        std::map<std::string, std::string> custom_errors;
-        for (int i = 0; i < temp.size(); ++i)
+        for (unsigned int i = 0; i < temp.size(); ++i)
         {
           custom_errors[temp[i][0]] =  temp[i][1];
         }
