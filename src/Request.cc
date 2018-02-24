@@ -43,10 +43,10 @@ int Request::parse_fields(std::string message_header)
     field = clean_string(field);
 
     std::string::iterator first_not_space;
-    std::string::iterator last_not_space;
+    std::string::reverse_iterator last_not_space;
     for (auto it=value.begin(); it != value.end(); it++)
     {
-        if (*it != " ")
+        if (*it != ' ')
         {
             first_not_space = it;
             break;
@@ -54,15 +54,15 @@ int Request::parse_fields(std::string message_header)
     }
     for (auto rit=value.rbegin(); rit != value.rend(); rit++)
     {
-        if (*it != " ")
+        if (*rit != ' ')
         {
-            last_not_space = it;
+            last_not_space = rit;
             break;
         }
     }
 
     remove_if(value.begin(), first_not_space, isspace);
-    remove_if(last_not_space, value.end(), isspace);
+    remove_if(last_not_space, value.rend(), isspace);
 
     Set_field(field, value);
     return 0;
