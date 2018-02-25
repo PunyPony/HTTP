@@ -17,14 +17,16 @@ std::string get_request(int client_sock);
 
 class ResponseBuilder {
 public:
-    ResponseBuilder(int client_sock, std::string request, HTTPServerOptions& options, std::shared_ptr<SynchronizedFile>& log_file);
+    ResponseBuilder(int client_sock, std::string request, std::shared_ptr<SynchronizedFile>& log_file);
     int analyse_request();
     int generate_response();
     int send_reponse();
     int log();
     std::string& get_response();
     void set_response(std::string& response);
-protected:
+    std::string get_request_header(std::string name);
+    void set_options(HTTPServerOptions* options);
+private:
     friend class Request;
     friend class Response;
     int client_sock_;
@@ -34,10 +36,10 @@ protected:
     std::string version_;
     std::string request_;
     std::string response_;
-    HTTPServerOptions& options_;
+    HTTPServerOptions* options_ = nullptr;
     std::shared_ptr<SynchronizedFile> log_file_;
     std::unordered_map<std::string, std::string> fields_;
-private:
+
     void error(std::string msg, int code);
     Request req{this};
     Response res{this};

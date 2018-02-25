@@ -15,7 +15,7 @@
 #include "HTTPServerOptions.hh"
 #include "ThreadPool.hh"
 
-HTTPServer::HTTPServer(HTTPServerOptions options, std::string log_file_path)
+HTTPServer::HTTPServer(std::unordered_map<std::string, HTTPServerOptions> options, std::string log_file_path)
     : options_(options), log_file_(std::make_shared<SynchronizedFile>(log_file_path))
 {
     // Insert a filter to fail all the CONNECT request, if required
@@ -38,10 +38,10 @@ int HTTPServer::init(int& sock) //fix les acc�s de merde
     }
     struct sockaddr_in addrin;
     addrin.sin_family = AF_INET;
-    addrin.sin_port = htons(atoi(options_.get_server_tab().get_port().getparam().c_str()));
+    addrin.sin_port = htons(atoi(options_.begin()->second.get_server_tab().get_port().getparam().c_str()));
 
     //convert string ip to good form
-    if (!inet_aton(options_.get_server_tab().get_ip().getparam().c_str(), &addrin.sin_addr))
+    if (!inet_aton(options_.begin()->second.get_server_tab().get_ip().getparam().c_str(), &addrin.sin_addr))
     {
         std::cout << "inet_aton fail" << std::endl;
         return -1;
@@ -101,15 +101,15 @@ int HTTPServer::start(int sock)
             }
             DefaultThreadPool::submitJob([requested_sock, request, this, epollfd]() //fixme: sock where event occured
             {
-                ResponseBuilder builder(requested_sock, request, this->options_, get_log_file());
+                ResponseBuilder builder(requested_sock, request, get_log_file());
+                auto options = this->get_server_options(builder.get_request_header("SERVER_NAME"));
+                if (options)
+                    builder.set_options(options);
                 auto found = GlobalCache::getCache().cache_.find(request);
                 if (found == GlobalCache::getCache().cache_.end())
                 {
-                    //start of analyse
+                    // start of analyse
                     builder.analyse_request();
-                    // write to log file
-                    if (get_options().get_server_tab().get_log().getparam())
-                        builder.log();
                     // build response
                     builder.generate_response();
                     // cache
@@ -122,6 +122,10 @@ int HTTPServer::start(int sock)
                     std::cout << "Cached" << std::endl;
                     builder.set_response(found->second);
                 }
+                // write to log file
+                if (options->get_server_tab().get_log().getparam())
+                    builder.log();
+                // send response
                 if (builder.send_reponse() == 1) //connection closed (by client or version is HTTP/1.0)
                         if (-1 == epoll_ctl(epollfd, EPOLL_CTL_DEL, requested_sock, NULL)) 
                         {
@@ -135,9 +139,17 @@ int HTTPServer::start(int sock)
     return 0;
 }
 
-HTTPServerOptions& HTTPServer::get_options()
+//HTTPServerOptions& HTTPServer::get_options()
+//{
+//    return options_;
+//}
+
+HTTPServerOptions* HTTPServer::get_server_options(std::string server_name)
 {
-    return options_;
+    auto res = options_.find(server_name);
+    if (res != options_.end())
+        return &res->second;
+    return nullptr;
 }
 
 std::shared_ptr<SynchronizedFile>& HTTPServer::get_log_file()

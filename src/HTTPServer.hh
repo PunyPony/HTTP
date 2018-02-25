@@ -1,8 +1,11 @@
 #pragma once
 #include <memory>
+#include <unordered_map>
+
 #include "HTTPServerOptions.hh"
 #include "SynchronizedFile.hh"
 #include "Cache.hh"
+
 
 
 class HTTPServer {
@@ -11,7 +14,7 @@ class HTTPServer {
   /**
    * Create a new HTTPServer
    */
-  HTTPServer(HTTPServerOptions options, std::string log_file_path_);
+  HTTPServer(std::unordered_map<std::string, HTTPServerOptions> options, std::string log_file_path_);
   ~HTTPServer();
   /**
    * Start HTTPServer.
@@ -52,11 +55,13 @@ class HTTPServer {
   void stop();
 
   int getListenSocket() const;
-  HTTPServerOptions& get_options();
+
+  HTTPServerOptions* get_server_options(std::string server_name);
+  //HTTPServerOptions& get_options();
   std::shared_ptr<SynchronizedFile>& get_log_file();
 
  private:
-  HTTPServerOptions options_;
+     std::unordered_map<std::string, HTTPServerOptions> options_;
   std::shared_ptr<SynchronizedFile> log_file_;
   //Cache cache_;
 };

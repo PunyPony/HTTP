@@ -8,7 +8,7 @@
 class ServersHandler
 {
  public:
-    ServersHandler(std::vector<HTTPServerOptions> options, std::string log_file_path);
+    ServersHandler(std::unordered_map<int, std::unordered_map<std::string, HTTPServerOptions>> options, std::string log_file_path);
     ~ServersHandler();
     std::vector<HTTPServer> get_servers();
 
