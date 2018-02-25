@@ -111,9 +111,10 @@ int HTTPServer::start(int sock)
                     options = this->get_server_options(builder.get_request_header("SERVER_NAME"));
                 if (options)
                     builder.set_options(options);
-                auto found = GlobalCache::getCache().cache_.find(request);
+                builder.generate_response();
+                /*auto found = GlobalCache::getCache().cache_.find(request);
                 if (found == GlobalCache::getCache().cache_.end())
-                {                    
+                {
                     // start of analyse
                     builder.analyse_request();
                     // build response
@@ -127,7 +128,7 @@ int HTTPServer::start(int sock)
                 {
                     //std::cout << "Cached" << std::endl;
                     builder.set_response(found->second);
-                }
+                }*/
                 // write to log file
                 if (options && options->get_server_tab().get_log().getparam())
                     builder.log();

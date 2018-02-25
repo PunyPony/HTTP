@@ -53,7 +53,7 @@ int Request::parse_fields(std::string message_header)
             break;
         }
     }  
-    value.erase(remove_if(value.begin(), first_not_space, isspace), value.end());
+    value.erase(value.begin(), first_not_space);
 
     Set_field(field, value);
     return 0;
