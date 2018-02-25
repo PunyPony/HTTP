@@ -16,7 +16,8 @@ void server_thread(HTTPServer&& server)
     if (!server.init(sock))
         server.start(sock);
     else
-        std::cout << "ERROR launching server" << std::endl; //fixme: proper error
+    {}
+        //std::cout << "ERROR launching server" << std::endl; //fixme: proper error
 }
 
 ServersHandler::ServersHandler(std::unordered_map<int, std::unordered_map<std::string, HTTPServerOptions>> options, std::string log_file_path)

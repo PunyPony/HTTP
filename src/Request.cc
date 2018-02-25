@@ -35,11 +35,11 @@ int Request::parse_fields(std::string message_header)
 {
     std::string delimiter = ":";
     std::string field = get_token(message_header, delimiter);
-    std::cout << "field = "<< field << std::endl;
+    //std::cout << "field = "<< field << std::endl;
     if (field.empty())
         return -1;
     std::string value = get_request_rest(message_header, delimiter);
-    std::cout << "value = "<< value << std::endl;
+    //std::cout << "value = "<< value << std::endl;
     field = clean_string(field);
 
     std::string::iterator first_not_space;
@@ -62,14 +62,14 @@ void Request::Set_field(std::string& field, std::string& value)
 {
   std::pair<std::string, std::string>  el(field, value);
   R_->fields_.insert(el);
-  std::cout << "Inserted : " << el.first << " : " << el.second << std::endl;
+  //std::cout << "Inserted : " << el.first << " : " << el.second << std::endl;
 }
 
 std::string Request::clean_string(std::string& s)
 {
-  remove_if(s.begin(), s.end(), isspace);
+  s.erase(remove_if(s.begin(), s.end(), isspace), s.end());
   std::transform(s.begin(), s.end(), s.begin(),
-  [](unsigned char c){ return std::toupper(c);});
+  [](unsigned char c){ return std::touppler(c);});
   return s;
 }
 
