@@ -154,6 +154,7 @@ int Request::parse_request(std::string request)
       //std::cout << "Rest = " << rest << std::endl;
     }
     if (!parse_body(get_token(request, delimiter)))
+    {}
       //std::cout << "Body found = " << std::endl;
 
     return 0;
