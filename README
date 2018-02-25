@@ -1,9 +1,10 @@
 *********************************MyHTTPd**************************************
+*                                                                            *
 * MyHTTPd is a projcet about building a server that request web pages.       *
-*                                                                            *
-*                                                                            *
+* The project deal with parsing basic request in http (GET/POST)             *
+* We have to handle lots of simultaneous connexions thanks to threads.       *
 *                                                                            * 
-*                                                                            *
-*                                                                            *
+* We use curl to generate request, and TOML which is a custom library,       *
+* to parse the given server configuration.                                   *
 *                                                                            *
 *****************************************************************************
