@@ -21,12 +21,6 @@ Response::Response(ResponseBuilder* R)
     R_ = R;
 }
 
-void ResponseBuilder::error(std::string msg, int code)
-{
-    std::cerr << msg << " : " << code << std::endl;
-}
-
-
 std::string Response::forge_error_response(error_type err)
 {
     std::string error_message;

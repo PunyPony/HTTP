@@ -11,7 +11,7 @@
 #include <unistd.h>
 #include <fstream>
 #include <algorithm>
-#include <local>
+#include <locale>
 
 #include "ResponseBuilder.hh"
 #include "Request.hh"
@@ -70,7 +70,7 @@ std::string Request::clean_string(std::string& s)
 {
   s.erase(remove_if(s.begin(), s.end(), isspace), s.end());
   std::transform(s.begin(), s.end(), s.begin(),
-  [](unsigned char c){ return std::touppler(c);});
+  [](unsigned char c){ return std::toupper(c);});
   return s;
 }
 

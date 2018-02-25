@@ -26,6 +26,12 @@ ResponseBuilder::ResponseBuilder(int client_sock, std::string request, std::shar
     //sleep(1);
 }
 
+void ResponseBuilder::error(std::string msg, int code)
+{
+    msg=msg;
+    code=code;
+}
+
 std::string& ResponseBuilder::get_response()
 {
     return response_;
@@ -55,7 +61,7 @@ int ResponseBuilder::log()
     }
 
     std::string log_line = "[" + serv_name + "]"+ " " + version_ + " " + type + " " + requested_ressource_ + "\n";
-    //std::cout << "Log Line : " << log_line << std::endl;
+    std::cout << "Log Line : " << log_line << std::endl;
     log_file_->write(log_line);
     return 0;
 }

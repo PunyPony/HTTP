@@ -131,22 +131,22 @@ int main(int argc, char* argv[])
     {
       if (!server_array[i].get_server_name().get())
       {
-        std::cerr << "Missing server_name." << std::endl;
+        //std::cerr << "Missing server_name." << std::endl;
         return 2;
       }
       if (!server_array[i].get_port().get())
       {
-        std::cerr << "Missing port." << std::endl;
+        //std::cerr << "Missing port." << std::endl;
         return 2;
       }
       if (!server_array[i].get_ip().get())
       {
-        std::cerr << "Missing ip." << std::endl;
+        //std::cerr << "Missing ip." << std::endl;
         return 2;
       }
       if (!server_array[i].get_root_dir().get())
       {
-        std::cerr << "Missing root_dir." << std::endl;
+        //std::cerr << "Missing root_dir." << std::endl;
         return 2;
       }
     }
