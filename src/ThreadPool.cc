@@ -19,10 +19,10 @@ ThreadPool::ThreadPool(const std::uint32_t numThreads)
     : ThreadPool{ std::max(std::thread::hardware_concurrency(), 2u) - 1u }
 {
     /*
-        * Always create at least one thread.  If hardware_concurrency() returns 0,
-        * subtracting one would turn it to UINT_MAX, so get the maximum of
-        * hardware_concurrency() and 2 before subtracting 1.
-        */
+    Always create at least one thread.  If hardware_concurrency() returns 0,
+    subtracting one would turn it to UINT_MAX, so get the maximum of
+    hardware_concurrency() and 2 before subtracting 1.
+    */
 }
 
 

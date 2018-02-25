@@ -5,12 +5,11 @@
 #include <map>
 #include "ConfigOptions.hh"
 
-
 class ServerConfig{
   
   public:
     ServerConfig();
-    
+
     Serverparameter<std::string>& get_server_name();
     void set_server_name(std::string name);
 
@@ -47,10 +46,7 @@ class ServerConfig{
     Serverparameter<std::map<std::string, std::string>>& get_custom_error();
     void set_custom_error(std::map<std::string, std::string> custom_error_);
 
-
   private:
-    
-   
     Serverparameter<std::string> server_name;
     Serverparameter<std::string> port;
     Serverparameter<std::string> ip;

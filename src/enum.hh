@@ -8,7 +8,7 @@ enum request_type
 
 enum error_type
 {
-    NICEUH = 0,
+    OK = 0,
     ACCESS_DENIED = 401,
     FORBIDDEN = 403,
     FILE_NOT_FOUND = 404,
@@ -16,5 +16,5 @@ enum error_type
     INTERNAL_ERROR = 500,
     HTTP_VERSION_NOT_SUPPORTED = 505,
     NOT_IMPLEMENTED = 6666,
-    NIQUE_TA_MERE = 6969
+    REQUEST_ERROR = 6969
 };

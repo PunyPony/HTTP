@@ -28,8 +28,8 @@ bool ThreadSafeQueue<T>::waitPop(T& out)
         return !m_queue.empty() || !m_valid;
     });
     /*
-    * Using the condition in the predicate ensures that spurious wakeups with a valid
-    * but empty queue will not proceed, so only need to check for validity before proceeding.
+    Using the condition in the predicate ensures that spurious wakeups with a valid
+    but empty queue will not proceed, so only need to check for validity before proceeding.
     */
     if(!m_valid)
     {

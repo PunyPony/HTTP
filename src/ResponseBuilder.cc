@@ -21,9 +21,6 @@ ResponseBuilder::ResponseBuilder(int client_sock, std::string request, std::shar
     log_file_ = log_file;
     client_sock_ = client_sock;
     request_ = std::move(request);
-    /*res = this;
-    req = this;*/
-    //sleep(1);
 }
 
 void ResponseBuilder::error(std::string msg, int code)

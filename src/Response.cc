@@ -44,14 +44,14 @@ std::string Response::forge_error_response(error_type err)
     case HTTP_VERSION_NOT_SUPPORTED:
         error_message = "HTTP Version not supported"; //505
         break;
-    case NIQUE_TA_MERE:
-        error_message = "NIQUE_TA_MERE";
+    case REQUEST_ERROR:
+        error_message = "Request error";
         break;
     case NOT_IMPLEMENTED:
-        error_message = "NOT_IMPLEMENTED";
+        error_message = "Not implemented";
         break;
     default:
-        error_message = "A + DANS LE BUS";
+        error_message = "A+ DANS LE BUS";
     }
     return error_format(err, error_message);
 }
@@ -151,7 +151,7 @@ std::string Response::error_format(error_type err, std::string error_message)
 
 int Response::forge_response()
 {
-    if (R_->parsing_error_ != NICEUH) {
+    if (R_->parsing_error_ != OK) {
         R_->response_ = forge_error_response(R_->parsing_error_);
         return 0;
     }
@@ -202,7 +202,7 @@ int Response::forge_response()
         R_->response_ = forge_error_response(NOT_IMPLEMENTED);
         break;
     default:
-        R_->response_ = forge_error_response(NIQUE_TA_MERE); //or INTERNAL_ERROR for less fun
+        R_->response_ = forge_error_response(REQUEST_ERROR); //or INTERNAL_ERROR for less fun
     }
     return 0;
 }

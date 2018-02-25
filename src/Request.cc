@@ -92,7 +92,7 @@ int Request::parse_request_line(std::string request_line)
 
     if (method.empty() || request_uri.empty() || http_version.empty())
     {
-        R_->parsing_error_ = NIQUE_TA_MERE; //fixme
+        R_->parsing_error_ = REQUEST_ERROR; //fixme
         return -1;
     }
 

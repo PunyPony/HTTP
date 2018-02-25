@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 {
   bool dry_run = false;
 
-  //Check arguments
+  // Check arguments
   if (argc < 2 || argc > 3)
   {
     //std::cerr << "usage: ./myhttpd [--dry-run] server.conf" << std::endl;
@@ -35,28 +35,22 @@ int main(int argc, char* argv[])
     arg = argv[2];
 
   std::ifstream file(arg);
-
-  /*
-  if (not file.good())
-    return 1;
-  */
-  
   std::string log_file;
   int nbserv = 0;
 
   try{
 
-    //Parse the file
+    // Parse the file
     toml::Data data = toml::parse(file);
 
-    //Get first element: log_file
+    // Get first element: log_file
     
     try{
       log_file = toml::get<toml::String>(data.at("log_file"));
     }catch(...){
     }
   
-    //Create array of server to delimit each server config
+    // Create array of server to delimit each server config
     std::vector<toml::Table> server = toml::get<toml::Array<toml::Table> >(data.at("server"));
 
     for (auto it = server.cbegin(); it != server.cend(); ++it)

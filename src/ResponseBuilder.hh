@@ -31,7 +31,7 @@ private:
     friend class Response;
     int client_sock_;
     enum request_type type_ = UNKNOWN;
-    enum error_type parsing_error_ = NICEUH;
+    enum error_type parsing_error_ = OK;
     std::string requested_ressource_;
     std::string version_;
     std::string request_;
