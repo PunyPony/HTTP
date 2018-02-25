@@ -15,14 +15,25 @@
 
 int main(int argc, char* argv[])
 {
+  bool dry_run = false;
+
   //Check arguments
-  if (argc != 2)
+  if (argc < 2 || argc > 3)
   {
-    std::cerr << "usage: ./myhttpd server.conf" << std::endl;
+    std::cerr << "usage: ./myhttpd [--dry-run] server.conf" << std::endl;
     return 1;
   }
 
-  const char* arg = argv[1];
+  const char* arg;
+
+  if (std::string(argv[1]) == "--dry-run")
+    dry_run = true;
+
+  if (argc < 3)
+    arg = argv[1];
+  else
+    arg = argv[2];
+
   std::ifstream file(arg);
 
   /*
@@ -30,7 +41,6 @@ int main(int argc, char* argv[])
     return 1;
   */
   
-  bool dry_run = false;
   std::string log_file;
   int nbserv = 0;
 
@@ -39,13 +49,8 @@ int main(int argc, char* argv[])
     //Parse the file
     toml::Data data = toml::parse(file);
 
-    //Get 2 first elements: log_file and dry_run
-
-    try{
-       dry_run = toml::get<bool>(data.at("dry_run"));
-    }catch(...){
-    }
-
+    //Get first element: log_file
+    
     try{
       log_file = toml::get<toml::String>(data.at("log_file"));
     }catch(...){
@@ -108,41 +113,19 @@ int main(int argc, char* argv[])
 
       if (server.at(i).count("error"))
       {
-        //std::cout << "yolo" << std::endl;
        
-        std::vector<std::vector<std::string>> temp = toml::get<std::vector<std::vector<std::string>>>(server.at(i).at("error"));
+          std::vector<std::vector<std::string>> temp = toml::get<std::vector<std::vector<std::string>>>(server.at(i).at("error"));
 
-      // std::cout << "Size of temp : " <<temp.size() << std::endl;
-       
-       std::map<std::string, std::string> custom_errors;
+        std::map<std::string, std::string> custom_errors;
         for (unsigned int i = 0; i < temp.size(); ++i)
         {
           custom_errors[temp[i][0]] =  temp[i][1];
         }
-/* 
-        for (const auto& t : custom_errors)
-        {
-          std::cout << t.first << std::endl;
-          std::cout << t.second << std::endl;
-        } 
-*/
 
-     //   server_array[i].set_custom_error(toml::get<std::vector<std::vector<std::string>>>(server.at(i).at("error")));
-      server_array[i].set_custom_error(custom_errors);
-     }
+        server_array[i].set_custom_error(custom_errors);
+      }
     }
-   /* 
-    std::cout << server_array[2].get_custom_error().getparam()[0][0]<< std::endl;
-    std::cout << server_array[2].get_custom_error().getparam()[0][1]<< std::endl;
-    std::cout << server_array[2].get_custom_error().getparam()[1][0]<< std::endl;
-    std::cout << server_array[2].get_custom_error().getparam()[1][1]<< std::endl;
-    */
     
-    
-    //std::vector<std::vector<std::string>> a = toml::get<std::vector<std::vector<std::string>>>(server.at(nbserv - 1).at("error"));
-   // std::string firstcode  = a[0][0];
-   // std::cout << firstcode << std::endl;
-
     //Checking Parsing Errors
     for (int i = 0; i < nbserv; i++)
     {
