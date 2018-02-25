@@ -2,9 +2,17 @@
 
 1. Server Configuration
   a. Basic Parsing:         OK
-  b. Manage Custom Errors:  KO
+  b. Manage Custom Errors:  OK
 2. Basic HTTP
+  a. GET                    OK
+  b. POST                   OK
 3. Common Gateway Interface
+                            KO
 4. Multiple Clients
+                            OK
 5. Virtual Hosts
+                            KO
 6. Advance Features
+                            KO
+
+******************************************************************************
