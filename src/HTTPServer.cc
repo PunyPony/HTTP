@@ -33,7 +33,7 @@ int HTTPServer::init(int& sock) //fix les acc�s de merde
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock == -1)
     {
-        std::cout << "sock fail" << std::endl;
+        //std::cout << "sock fail" << std::endl;
         return -1;
     }
     struct sockaddr_in addrin;
@@ -43,17 +43,17 @@ int HTTPServer::init(int& sock) //fix les acc�s de merde
     //convert string ip to good form
     if (!inet_aton(options_.begin()->second.get_server_tab().get_ip().getparam().c_str(), &addrin.sin_addr))
     {
-        std::cout << "inet_aton fail" << std::endl;
+        //std::cout << "inet_aton fail" << std::endl;
         return -1;
     }
     if (bind(sock, (sockaddr*)&addrin, sizeof(addrin)) == -1)
     {
-        std::cout << "bind fail" << std::endl;
+        //std::cout << "bind fail" << std::endl;
         return -1;
     }
     if (listen(sock, 10) == -1) //limited to 10 connections ; must be an option
     {
-        std::cout << "listen fail" << std::endl;
+        //std::cout << "listen fail" << std::endl;
         return -1;
     }
     return 0;
@@ -70,7 +70,7 @@ int HTTPServer::start(int sock)
             int client_sock = accept4(sock, (sockaddr*)&sockin, &socklen, SOCK_NONBLOCK);
             if (client_sock != -1)
             {
-                std::cout << "New client" << std::endl;
+                //std::cout << "New client" << std::endl;
                 struct epoll_event tmpevents {
                     EPOLLIN,
                     { 0 }
@@ -78,7 +78,7 @@ int HTTPServer::start(int sock)
                 tmpevents.data.fd = client_sock;
                 if (-1 == epoll_ctl(epollfd, EPOLL_CTL_ADD, client_sock, &tmpevents))
                 {
-                    std::cout << "epoll_ctl error" << std::endl;
+                    //std::cout << "epoll_ctl error" << std::endl;
                     return -1;
                 }
             }
@@ -113,13 +113,13 @@ int HTTPServer::start(int sock)
                     // build response
                     builder.generate_response();
                     // cache
-                    std::cout << "Not cached" << std::endl;
+                    //std::cout << "Not cached" << std::endl;
                     auto response = builder.get_response();
                     GlobalCache::getCache().insert(std::pair<std::string,std::string>(request, response));
                 }
                 else
                 {
-                    std::cout << "Cached" << std::endl;
+                    //std::cout << "Cached" << std::endl;
                     builder.set_response(found->second);
                 }
                 // write to log file

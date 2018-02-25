@@ -55,7 +55,7 @@ int ResponseBuilder::log()
     }
 
     std::string log_line = "[" + serv_name + "]"+ " " + version_ + " " + type + " " + requested_ressource_ + "\n";
-    std::cout << "Log Line : " << log_line << std::endl;
+    //std::cout << "Log Line : " << log_line << std::endl;
     log_file_->write(log_line);
     return 0;
 }
@@ -91,7 +91,7 @@ std::string get_request(int client_sock)
     bzero(buffer, BUFFER_SIZE);
     std::stringstream readStream;
     int readResult = 0;
-    std::cout << "Receiving chunk... ";
+    //std::cout << "Receiving chunk... ";
     while ((readResult = read(client_sock, buffer, BUFFER_SIZE)) > 0)
         readStream << buffer;
 
@@ -107,7 +107,7 @@ std::string get_request(int client_sock)
     }
 
     std::string readData = readStream.str();
-    std::cout << readData << std::endl;
+    //std::cout << readData << std::endl;
     return readData;
 }
 

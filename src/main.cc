@@ -20,7 +20,7 @@ int main(int argc, char* argv[])
   //Check arguments
   if (argc < 2 || argc > 3)
   {
-    std::cerr << "usage: ./myhttpd [--dry-run] server.conf" << std::endl;
+    //std::cerr << "usage: ./myhttpd [--dry-run] server.conf" << std::endl;
     return 1;
   }
 
@@ -169,7 +169,7 @@ int main(int argc, char* argv[])
       return 0;
 
   }catch(...){
-    std::cerr << "Parsing error." <<std::endl;
+    //std::cerr << "Parsing error." <<std::endl;
     return 2;
   }
 }

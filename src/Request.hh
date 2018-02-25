@@ -21,8 +21,6 @@ public:
     int parse_body(std::string request);
     int parse_request(std::string request);
     int get_request_type();
-   // std::string error_format(error_type err, std::string error_message);
-
 private:
     ResponseBuilder * R_;
 };

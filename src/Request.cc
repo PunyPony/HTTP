@@ -77,19 +77,15 @@ int Request::parse_request_line(std::string request_line)
 {
     std::string delimiter = " ";
     std::string method = get_token(request_line, delimiter);
-    std::cout << "method = " << method << std::endl;
+    //std::cout << "method = " << method << std::endl;
     method = clean_string(method);
-    std::cout << "clean method = " << method << std::endl;
-
-    //fixme
-
+    //std::cout << "clean method = " << method << std::endl;
     get_request_rest(request_line, delimiter);
     std::string request_uri = get_token(request_line, delimiter);
-    std::cout << "request_uri = " << request_uri << std::endl;
-
+    //std::cout << "request_uri = " << request_uri << std::endl;
     get_request_rest(request_line, delimiter);
     std::string http_version = get_token(request_line, delimiter);
-    std::cout << "http_version = " << http_version << std::endl;
+    //std::cout << "http_version = " << http_version << std::endl;
 
     R_->version_ = http_version;
 
@@ -109,15 +105,10 @@ int Request::parse_request_line(std::string request_line)
     {
         R_->type_ = GET;
         R_->requested_ressource_ = request_uri;
-        /*
-        R_->params_ = new struct fileparams;
-        ((struct fileparams*)R_->params_)->path = request_uri;
-        */
     }
     else if (method == "POST")
     {
         R_->type_ = POST;
-        //fixme
     }
     return 0;
 }
@@ -144,26 +135,26 @@ int Request::parse_request(std::string request)
     [ message-body ]
     */
     std::string delimiter = "\r\n";
-    std::cout << "Request = " << request << std::endl;
+    //std::cout << "Request = " << request << std::endl;
     if (parse_request_line(get_token(request, delimiter)))
     {
-        std::cout << "request line failed " << get_token(request, delimiter) << std::endl;
+        //std::cout << "request line failed " << get_token(request, delimiter) << std::endl;
         return -1;
     }
 
     std::string rest = get_request_rest(request, delimiter);
-    std::cout << "Rest = " << rest << std::endl;
+    //std::cout << "Rest = " << rest << std::endl;
     while (!rest.empty())
     {
       std::string next_token = get_token(rest, delimiter);
-      std::cout << "Next token = " << next_token << std::endl;
+      //std::cout << "Next token = " << next_token << std::endl;
       if (!parse_header(next_token))
         return -1;
       rest = get_request_rest(request, delimiter);
-      std::cout << "Rest = " << rest << std::endl;
+      //std::cout << "Rest = " << rest << std::endl;
     }
     if (!parse_body(get_token(request, delimiter)))
-      std::cout << "Body found = " << std::endl;
+      //std::cout << "Body found = " << std::endl;
 
     return 0;
 }

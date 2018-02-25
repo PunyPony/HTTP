@@ -50,7 +50,7 @@ std::vector<HTTPServer> ServersHandler::get_servers()
 void signal_handler(int signal)
 {
     ugly::SignalStatus = signal;
-    std::cout << "SIGINT : Signal value : " << ugly::SignalStatus << '\n';
+    //std::cout << "SIGINT : Signal value : " << ugly::SignalStatus << '\n';
     for (auto& it : ugly::server_handler_->get_servers())
         it.stop();
 }
@@ -58,7 +58,7 @@ void signal_handler(int signal)
 void signal_ignored(int signal)
 {
     ugly::SignalStatus = signal;
-    std::cout << "Signal value : " << ugly::SignalStatus << '\n';
+    //std::cout << "Signal value : " << ugly::SignalStatus << '\n';
 }
 
 
