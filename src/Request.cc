@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <fstream>
 #include <algorithm>
+#include <local>
 
 #include "ResponseBuilder.hh"
 #include "Request.hh"
