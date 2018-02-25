@@ -101,21 +101,33 @@ int HTTPServer::start(int sock)
             }
             DefaultThreadPool::submitJob([requested_sock, request, this, epollfd]() //fixme: sock where event occured
             {
-                //start of analyse
                 ResponseBuilder builder(requested_sock, request, this->options_, get_log_file());
-                builder.analyse_request();
-                // write to log file
-                if (get_options().get_server_tab().get_log().getparam())
-                    builder.log();
-                // build response
-                builder.generate_response();
-
+                auto found = GlobalCache::getCache().cache_.find(request);
+                if (found == GlobalCache::getCache().cache_.end())
+                {
+                    //start of analyse
+                    builder.analyse_request();
+                    // write to log file
+                    if (get_options().get_server_tab().get_log().getparam())
+                        builder.log();
+                    // build response
+                    builder.generate_response();
+                    // cache
+                    std::cout << "Not cached" << std::endl;
+                    auto response = builder.get_response();
+                    GlobalCache::getCache().insert(std::pair<std::string,std::string>(request, response));
+                }
+                else
+                {
+                    std::cout << "Cached" << std::endl;
+                    builder.set_response(found->second);
+                }
                 if (builder.send_reponse() == 1) //connection closed (by client or version is HTTP/1.0)
-                    if (-1 == epoll_ctl(epollfd, EPOLL_CTL_DEL, requested_sock, NULL)) {
-                        //fixme: log error
-                    }
-            }
-            );
+                        if (-1 == epoll_ctl(epollfd, EPOLL_CTL_DEL, requested_sock, NULL)) 
+                        {
+                            //fixme: log error
+                        }
+            });
         }
     }
 

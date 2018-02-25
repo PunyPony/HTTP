@@ -27,6 +27,16 @@ ResponseBuilder::ResponseBuilder(int client_sock, std::string request, HTTPServe
     //sleep(1);
 }
 
+std::string& ResponseBuilder::get_response()
+{
+    return response_;
+}
+
+void ResponseBuilder::set_response(std::string& response)
+{
+    response_= response;
+}
+
 int ResponseBuilder::log()
 {
     std::string serv_name = options_.get_server_tab().get_server_name().getparam();

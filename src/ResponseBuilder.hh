@@ -22,6 +22,8 @@ public:
     int generate_response();
     int send_reponse();
     int log();
+    std::string& get_response();
+    void set_response(std::string& response);
 protected:
     friend class Request;
     friend class Response;
