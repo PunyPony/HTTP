@@ -61,8 +61,8 @@ int Request::parse_fields(std::string message_header)
         }
     }
 
-    remove_if(value.begin(), first_not_space, isspace);
-    remove_if(last_not_space, value.rend(), isspace);
+    auto value = remove_if(value.begin(), first_not_space, isspace);
+    auto value = remove_if(last_not_space, value.rend(), isspace);
 
     Set_field(field, value);
     return 0;
