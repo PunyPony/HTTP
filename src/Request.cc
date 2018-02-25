@@ -43,26 +43,16 @@ int Request::parse_fields(std::string message_header)
     field = clean_string(field);
 
     std::string::iterator first_not_space;
-    std::string::reverse_iterator last_not_space;
-    for (auto it=value.begin(); it != value.end(); it++)
+    
+    for (auto it = value.begin(); it != value.end(); it++)
     {
         if (*it != ' ')
         {
             first_not_space = it;
             break;
         }
-    }
-    for (auto rit=value.rbegin(); rit != value.rend(); rit++)
-    {
-        if (*rit != ' ')
-        {
-            last_not_space = rit;
-            break;
-        }
-    }
-
-    auto value = remove_if(value.begin(), first_not_space, isspace);
-    auto value = remove_if(last_not_space, value.rend(), isspace);
+    }  
+    value.erase(remove_if(value.begin(), first_not_space, isspace), value.end());
 
     Set_field(field, value);
     return 0;
@@ -160,7 +150,6 @@ int Request::parse_request(std::string request)
         std::cout << "request line failed " << get_token(request, delimiter) << std::endl;
         return -1;
     }
-
 
     std::string rest = get_request_rest(request, delimiter);
     std::cout << "Rest = " << rest << std::endl;
