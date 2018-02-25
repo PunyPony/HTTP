@@ -39,6 +39,8 @@ class HTTPServer {
   void stop();
   int getListenSocket() const;
   HTTPServerOptions* get_server_options(std::string server_name);
+  HTTPServerOptions* get_server_options();
+  int get_server_count();
   std::shared_ptr<SynchronizedFile>& get_log_file();
  private:
      std::unordered_map<std::string, HTTPServerOptions> options_;

@@ -53,7 +53,7 @@ int Request::parse_fields(std::string message_header)
             break;
         }
     }  
-    value.erase(remove_if(value.begin(), first_not_space, isspace), value.end());
+    value.erase(value.begin(), first_not_space);
 
     Set_field(field, value);
     return 0;
@@ -149,7 +149,7 @@ int Request::parse_request(std::string request)
     {
       std::string next_token = get_token(rest, delimiter);
       //std::cout << "Next token = " << next_token << std::endl;
-      if (!parse_header(next_token))
+      if (parse_header(next_token))
         return -1;
       rest = get_request_rest(request, delimiter);
       //std::cout << "Rest = " << rest << std::endl;
